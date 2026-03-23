@@ -1,132 +1,172 @@
-# science
+# Science
 
-An "objective function" for science — grounding scientific progress in the Bayesian/Kolmogorov framework and connecting it to modern verification protocols and AutoResearch.
+This repo develops a single thesis: **science has an objective function, and we can write it down.**
 
----
+The objective function is the Bayesian/Kolmogorov framework — the combination of Bayes' rule with the Kolmogorov/Solomonoff prior. This is not a new proposal. It is a formal statement of what science has always been doing informally. The goal of this repo is to make that statement precise, connect it to the history of philosophy of science, and show how it bears on the most pressing current problems in scientific verification and automated research.
 
-## The Problem
-
-Science has always had an informal objective: find true, useful, general explanations of reality. But "informal" is the problem. Without a *formal* objective function, we have no rigorous way to:
-
-- Compare two competing theories
-- Decide when a new claim has been "verified"
-- Automate or semi-automate the research loop
-- Aggregate contributions from untrusted distributed sources
-
-This is not just a philosophical puzzle. It is an immediate engineering problem. Karpathy's AutoResearch project (discussed on the No Priors podcast with Sarah Guo, March 2026) proposes a closed-loop system where AI agents autonomously run experiments, train models, and optimize — the key insight being that *finding a good commit is hard, but verifying one is cheap*. The asymmetry between search and verification is central to everything that follows.
+The repo is written for a smart scientific audience — someone comfortable with probability, information theory, and the idea of an objective function from machine learning — who wants to understand what the *right* objective function for science actually is, and why.
 
 ---
 
-## Etymology: What "Objective" Actually Means
+## The Core Idea in Three Sentences
 
-The word *objective* comes from Medieval Latin *objectivus*, from *objectum* — "that which is thrown before (the mind)." The Latin root is *ob-* ("against, before") + *iacere* ("to throw"). So literally: *that which is placed in front of you as a target*.
+Science finds short descriptions of large bodies of observations. The right way to formalize "short description" is Kolmogorov complexity. The right way to formalize "finds" is Bayesian inference with the Solomonoff prior.
 
-The word had an interesting inversion in history. In the 1600s, "objective" meant *as perceived by the mind* — the phenomenal, the represented. By the 1700s, under influence from Kant and German philosophy, it shifted to mean *independent of the mind* — the real, the external. The connecting notion, from Merriam-Webster: *"considered in relation to its own nature."*
-
-So an *objective* objective function is one that is:
-
-1. **Placed before you as a target** (the goal-sense)
-2. **Independent of any particular observer** (the epistemological sense)
-3. **Grounded in the nature of the thing itself** (the Kantian sense)
-
-All three of these senses are captured by the Bayesian/Kolmogorov framework.
+Everything else in this repo is unpacking those three sentences.
 
 ---
 
-## The Objective Function: Bayes + Kolmogorov
+## The Objective Function
 
-The claim of this repo is that science already has an objective function — it just hasn't been written down cleanly. It is:
+The formal statement:
 
-    minimize  E[K(H)] - log P(D | H)
+    minimize  L(H) + L(D | H)
 
-where:
-
-- `H` is a hypothesis (a program, a theory, a model)
-- `K(H)` is the Kolmogorov complexity of `H` — the length of the shortest program that describes it
-- `P(D | H)` is the likelihood — how well `H` predicts the observed data `D`
-
-This is the **Minimum Description Length (MDL)** principle, which is the computable approximation to Solomonoff induction.
+where `H` is a hypothesis, `D` is observed data, `L(H)` is the description length of the hypothesis (approximating its Kolmogorov complexity), and `L(D | H)` is the description length of the data given the hypothesis (the negative log-likelihood). This is the **Minimum Description Length** (MDL) principle — the computable approximation to Solomonoff induction.
 
 Unpacked:
+- `L(H)` is Occam's razor, formalized. Simpler theories have shorter descriptions and are preferred, all else equal.
+- `L(D | H)` is predictive accuracy. A theory that predicts the data well compresses it well.
+- Together they define a single number that ranks any two theories against each other, given the same data.
 
-- **Bayesian reasoning** gives us the update rule: `P(H | D) ∝ P(D | H) · P(H)`. It is a provably optimal framework for belief revision given evidence.
-- **Kolmogorov/Solomonoff** gives us the prior: `P(H) ∝ 2^{-K(H)}`. Simpler programs — shorter theories — get higher prior probability. This is Occam's Razor *derived*, not assumed.
-- Together they define an objective function that is **observer-independent** (the prior is universal up to a constant independent of any particular mind) and **grounded in the nature of the object** (the complexity of the hypothesis itself).
-
-This is what we mean by calling it an *objective* objective function. The word earns both of its meanings simultaneously.
-
----
-
-## The Verification Problem
-
-The objective function above defines what science *is optimizing*, but it does not say how to *verify* that a new submission advances it. This is Karpathy's core question in AutoResearch, and it is also the question the mathematics community is facing as large Lean proofs are dropped on it by unknown or AI sources.
-
-The verification problem has two components:
-
-**1. Algorithmic verification**
-
-For certain domains, verification is cheap and automated:
-
-- **Formal proof checking**: Lean 4, Coq, Isabelle. A claimed theorem either type-checks or it doesn't. This is O(n) in proof length, not NP-hard. The checker does not need to trust the prover.
-- **Empirical reproduction**: given code + weights + data, rerun the experiment. Does the loss curve match? Do the metrics reproduce?
-- **Unit tests / reward signals**: for code, does the program pass the test suite? Karpathy's AutoResearch loop uses exactly this — the reward signal is the verifier.
-- **Compression-based verification**: does the proposed theory actually compress the data better than the prior best theory? MDL makes this a number.
-
-**2. Human/community protocols**
-
-For claims that are not yet in the verifiable domain, or where automated verification is too expensive, community protocols matter:
-
-- **Challenge-response**: a proposer must answer adversarial questions about their claim. This is the informal norm at academic seminars; it can be formalized as a protocol (e.g., interactive proof systems from complexity theory — IP = PSPACE).
-- **Replication markets**: prediction markets on whether a result replicates, with incentives tied to doing the replication work.
-- **Distributed Lean formalization**: analogous to Karpathy's SETI@Home vision — a community of agents (human + AI) that collectively formalize informal proofs, turning them into machine-checkable objects.
-- **Citation graph / Bayesian reputation**: weight new claims by the track record (posterior) of the source, updated by whether past claims survived verification.
-
-The key principle: **verification should be cheaper than discovery.** If it isn't, the protocol is wrong.
+This objective function is **objective** in both senses of the word: it is a *target* (something to minimize) and it is *observer-independent* (grounded in the structure of computation, not in any particular scientist's preferences). See `objective_functions/ETYMOLOGY.md` for why the word earns both meanings at once.
 
 ---
 
-## The AutoResearch Loop
+## Why This Matters Now
 
-Karpathy's AutoResearch system instantiates a fragment of this objective function. Per the No Priors podcast (March 2026), the system:
+Two things are happening simultaneously that make this more than a philosophical exercise.
 
-- Runs many parallel agent attempts (the search)
-- Verifies each attempt against a cheap reward signal (the verifier)
-- Keeps the improvements, discards the failures
-- Is designed to accept contributions from *untrusted* distributed sources — the key word being *untrusted*
+**AutoResearch**: Andrej Karpathy (No Priors podcast, March 2026) has proposed and built systems where AI agents autonomously run experiments, propose modifications, and optimize — closing the research loop without human intervention. The key insight: *finding a good result is hard, but verifying one is cheap.* This asymmetry is exactly the structure of Solomonoff induction: the search over hypothesis space is expensive, the verification of a proposed hypothesis is cheap. AutoResearch is Solomonoff induction made computable and distributed. See `connections/AUTORESEARCH_SOLOMONOFF.md`.
 
-The untrusted-source design is critical. It mirrors how Kolmogorov complexity works: you do not need to trust the *source* of a short program — you just need to verify that it is short and that it predicts the data. The source is irrelevant. The object speaks for itself.
-
-This is the philosophical core of the Bayesian/Kolmogorov framework applied to institutions: **trust the math, not the messenger.**
+**Formal verification**: Large machine-verified proofs (Lean 4, Coq) are being produced by AI systems and dropped on the community by unknown or untrusted sources. The question of how to verify these — and more broadly, how to verify any scientific claim from an untrusted source — is now an engineering problem, not just a philosophical one. The answer the Kolmogorov framework gives: **trust the object, not the messenger.** A proof either type-checks or it doesn't. A theory either compresses the data or it doesn't. The source is irrelevant.
 
 ---
 
-## Connection to Transformers as Bayesian Networks
+## Repo Structure
 
-The `shannon` paper proves that transformers implement exact belief propagation on factor graphs. This connects to the objective function in a specific way:
+The repo is organized into five directories, each developing one thread. They are designed to be read independently or together.
 
-- Gradient descent on a transformer is implicitly searching for weights that minimize description length of the training data
-- The AND/OR structure (attention heads as AND gates, FFN sigmoid as OR/updateBelief) is the architecture that belief propagation *requires* for exact inference on factor graphs
-- The empirical result — gradient descent recovers BP weights to three decimal places — means transformers are not just *inspired by* Bayesian inference; they *implement* it
+### `objective_functions/`
+The formal objective function for science, built up from first principles.
 
-So a transformer trained on scientific text is, in a precise sense, approximating the Solomonoff prior over the hypotheses expressed in that text. AutoResearch using a transformer as its backbone is therefore not just a heuristic optimization loop — it is an approximation to the formal Bayesian/Kolmogorov objective function for science.
+    README.md               — overview and the formal statement
+    ETYMOLOGY.md            — what "objective" means; why the word earns both senses
+    BAYES_KOLMOGOROV.md     — the full derivation: Bayes + Kolmogorov = MDL
+    VERIFICATION.md         — the search/verify asymmetry; algorithmic and community protocols
+    HISTORY.md              — how science has approximated this objective without writing it down
+    kolmogorov_complexity/  — a full treatment of Kolmogorov complexity (see below)
+
+### `objective_functions/kolmogorov_complexity/`
+A self-contained treatment of Kolmogorov complexity. Start with `INTUITION.md` if you are new to the concept; the other files develop it formally.
+
+    README.md               — map of the directory
+    INTUITION.md            — what K(x) is, built from examples before any formalism
+    FORMAL.md               — the precise definition and key theorems
+    INVARIANCE.md           — why the choice of machine doesn't matter (up to a constant)
+    UNCOMPUTABILITY.md      — why K is uncomputable, and why that is a feature not a bug
+    MDL.md                  — Minimum Description Length: the computable approximation
+    SOLOMONOFF.md           — how K generates the optimal prior for science
+    CONNECTIONS.md          — connections to entropy, compression, randomness, learning theory
+
+### `bayes/`
+Everything the word "Bayesian" means — it is one of the most overloaded terms in science. Each file covers one sense.
+
+    README.md               — map of the directory; how the senses fit together
+    INFERENCE.md            — Bayes' rule: the mechanics of prior, likelihood, posterior
+    EPISTEMOLOGY.md         — probability as degree of rational belief; Cox's theorem
+    FREQUENTISM.md          — the frequentist alternative; what the debate is actually about
+    NETWORKS.md             — Bayesian networks, factor graphs, belief propagation
+    BRAIN.md                — the Bayesian brain; predictive coding; free energy principle
+    LEARNING.md             — Bayesian learning; priors over parameters; connection to MDL
+
+### `philosophy_of_science/`
+The history of philosophy of science as a single long argument about Hume's problem of induction. Each movement is a response to the failures of the previous one. The Bayesian/Kolmogorov framework is where the argument arrives.
+
+    README.md               — the through-line; the map
+    INDUCTIVISM.md          — Bacon, Mill; the naive view most scientists implicitly hold
+    HUME.md                 — the problem of induction; why it is devastating
+    KANT.md                 — the synthetic a priori; what it saves and what it costs
+    LOGICAL_POSITIVISM.md   — Vienna Circle, verificationism, its collapse
+    POPPER.md               — falsificationism; conjectures and refutations
+    KUHN.md                 — paradigms, normal science, scientific revolutions
+    LAKATOS.md              — research programmes; the Popper/Kuhn synthesis
+    FEYERABEND.md           — against method; anarchism in science
+    BAYESIAN_CONFIRMATION.md — confirmation theory; probability as the logic of evidence
+    NATURALISM.md           — Quine, Laudan; philosophy continuous with science
+    REALISM.md              — scientific realism vs. antirealism; the live debate
+
+### `connections/`
+The most interesting thing in the repo. Each file identifies a place where two ideas from different traditions turn out to be the *same* idea, expressed in different language, developed by people who were not talking to each other. These are not analogies — they are identifications.
+
+    OVERVIEW.md                     — all ten connections summarized; the meta-pattern
+    HUME_HALTING.md                 — Hume's problem of induction IS the halting problem
+    KUHN_MDL.md                     — paradigm shifts are MDL phase transitions
+    BAYESIAN_BRAIN_TRANSFORMER.md   — the Bayesian brain and the transformer are the same architecture
+    FEYERABEND_SOLOMONOFF.md        — "anything goes" is the Solomonoff prior
+    POPPER_BAYES.md                 — corroboration is Bayesian updating without the prior
+    REPLICATION_CRISIS_MDL.md       — the replication crisis is an MDL accounting error
+    LAKATOS_COMPRESSION.md          — progressive vs. degenerating is compression growth vs. decay
+    KANT_LAKATOS.md                 — the synthetic a priori is Lakatos's hard core
+    HALLUCINATION_ILLUSION.md       — LLM hallucination and perceptual illusions are the same failure
+    AUTORESEARCH_SOLOMONOFF.md      — AutoResearch is Solomonoff induction made computable
 
 ---
 
-## Open Questions
+## Suggested Reading Paths
 
-- Can Kolmogorov complexity be approximated well enough (e.g., via neural compression) to make the objective function *practically* computable?
-- What is the right formalization of "untrusted source" verification in the language of interactive proof systems?
-- Can Lean 4 proof checking be made fast enough to serve as the reward signal in an AutoResearch loop?
-- Is the Bayesian update rule the *only* update rule consistent with the Kolmogorov prior, or are there alternatives?
+**If you want the core argument as fast as possible:**
+`objective_functions/ETYMOLOGY.md` →
+`objective_functions/BAYES_KOLMOGOROV.md` →
+`objective_functions/kolmogorov_complexity/INTUITION.md` →
+`objective_functions/kolmogorov_complexity/SOLOMONOFF.md` →
+`connections/OVERVIEW.md`
+
+**If you want the philosophical grounding:**
+`philosophy_of_science/README.md` →
+read the directory in order from `INDUCTIVISM.md` through `BAYESIAN_CONFIRMATION.md` →
+`connections/HUME_HALTING.md` →
+`connections/POPPER_BAYES.md`
+
+**If you are coming from machine learning:**
+`bayes/LEARNING.md` →
+`objective_functions/kolmogorov_complexity/MDL.md` →
+`connections/REPLICATION_CRISIS_MDL.md` →
+`connections/HALLUCINATION_ILLUSION.md` →
+`connections/AUTORESEARCH_SOLOMONOFF.md`
+
+**If you are coming from neuroscience:**
+`bayes/BRAIN.md` →
+`bayes/NETWORKS.md` →
+`connections/BAYESIAN_BRAIN_TRANSFORMER.md` →
+`connections/HALLUCINATION_ILLUSION.md`
+
+**If you want the single most surprising connection:**
+`connections/HUME_HALTING.md`
 
 ---
 
-## See Also
+## The Thesis, Stated Plainly
 
-- `shannon` — the Transformers are Bayesian Networks paper
-- `sigmoid-transformer-lean` — Lean 4 machine-verified proofs
-- `bayes-learner` — empirical confirmation of BP weight recovery
-- Karpathy, AutoResearch repo (github.com/karpathy/autoresearch)
+The history of philosophy of science is a record of humanity circling a single structure — the problem of optimal inference in a computable world — without the mathematical tools to see it directly. Hume identified the core impossibility. Popper, Kuhn, and Lakatos each described a facet of the solution without being able to state it. The Bayesian tradition formalized the update rule. Kolmogorov and Solomonoff formalized the prior.
+
+The tools now exist to state the full solution:
+
+**Science is the distributed search for hypotheses that minimize description length. Verification is cheap relative to discovery. The prior is the Solomonoff prior. The update rule is Bayes' rule. The objective function is MDL.**
+
+Everything else is details.
+
+---
+
+## Related Work
+
+- `shannon` repo — the Transformers are Bayesian Networks paper (formal proof that transformers implement exact belief propagation on factor graphs)
+- `sigmoid-transformer-lean` — Lean 4 machine-verified proofs of the core results
+- `bayes-learner` — empirical confirmation that gradient descent recovers BP weights to three decimal places
+- Karpathy, AutoResearch (github.com/karpathy/autoresearch)
 - Solomonoff (1964), "A formal theory of inductive inference"
-- Rissanen (1978), "Modeling by shortest data description" (MDL)
+- Rissanen (1978), "Modeling by shortest data description"
+- Kolmogorov (1965), "Three approaches to the quantitative definition of information"
 - Goldwasser, Micali, Rackoff (1989), "The knowledge complexity of interactive proof systems"
+- Rao and Ballard (1999), "Predictive coding in the visual cortex"
+- Friston (2005), "A theory of cortical responses"
