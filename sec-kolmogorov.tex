@@ -1,0 +1,119 @@
+\section{Kolmogorov Complexity}
+\label{sec:kolmogorov}
+
+\subsection{The Intuition}
+
+Consider two strings of a thousand bits. String A alternates 0 and 1
+indefinitely; String B is a typical output of a fair coin. Both are a
+thousand bits long. String A can be described in a few dozen characters:
+``alternating 0 and 1, one thousand times.'' String B, if genuinely random,
+cannot be described more briefly than writing it out in full.
+
+Kolmogorov complexity makes this precise. The complexity $\K(x)$ of a string
+$x$ is the length of the shortest computer program that outputs $x$ and halts.
+String A has very low $\K$; String B has $\K$ close to its own length.
+
+Three examples locate the concept concretely. The digits of $\pi$ look random
+but have very low $\K$: any standard algorithm for computing $\pi$ provides a
+program of a few hundred bytes that generates arbitrarily many digits.
+Newton's law of universal gravitation $F = Gm_1 m_2 / r^2$ is a program of a
+few dozen bytes that predicts the trajectories of every planet, moon, and comet
+we have observed, to many decimal places. A random genome, by contrast, would
+have $\K$ close to its raw length---but the actual human genome is substantially
+more compressible, because evolution is a compressive process.
+
+\subsection{The Formal Definition}
+
+Fix a universal Turing machine $U$. The Kolmogorov complexity of a finite
+binary string $x$ with respect to $U$ is:
+\[
+  \K_U(x) = \min\{ |p| : U(p) = x \}
+\]
+where $|p|$ is the length of program $p$ in bits. In practice, the
+prefix-free variant (where no valid program is a prefix of another) is
+standard; it has cleaner information-theoretic properties.
+
+The key theorems:
+
+\begin{theorem}[Invariance~\cite{kolmogorov1965}]
+For any two universal Turing machines $U$ and $V$:
+\[
+  |\K_U(x) - \K_V(x)| \leq c_{U,V}
+\]
+where $c_{U,V}$ depends only on the machines, not on $x$. For large strings,
+this constant is negligible relative to $\K(x)$.
+\end{theorem}
+
+The Invariance Theorem is what makes $\K(x)$ objective: the choice of machine
+changes the value by at most a fixed overhead, independent of the string being
+measured. For any two computable descriptions, the complexity is the same up
+to a translator constant.
+
+\begin{proposition}
+For any length $n$, at most $2^{n-c}$ strings of length $n$ have
+$\K(x) < n - c$. Most strings are incompressible.
+\end{proposition}
+
+This is a counting argument: there are only $2^{n-c}$ programs shorter than
+$n-c$ bits. When we encounter a compressible string in nature---a genome, a
+physical trajectory, a spectrum---that compressibility is evidence of an
+underlying generative process. Structure is rare.
+
+\subsection{Uncomputability: A Feature, Not a Bug}
+
+$\K(x)$ is not computable. No program, given $x$ as input, reliably outputs
+$\K(x)$ and halts. The proof is a formalization of Berry's paradox: supposing
+$\K$ were computable, one could construct a short program that outputs a string
+with high complexity---a contradiction.
+
+This is sometimes presented as a defect. It is not. Kolmogorov complexity is
+the \emph{right} measure of structural complexity. Its uncomputability is the
+signature of universality: $\K$ captures structure defined by all possible
+programs, not any particular one. If $\K$ were computable, it would be
+reducible to some specific algorithm, and that algorithm would make implicit
+choices about what structure counts.
+
+The scientist's relationship to $\K$ is the same as the mathematician's
+relationship to real numbers: most are uncomputable, yet the reals are the
+right framework. Scientists approximate $\K$ from above. Every proposed
+theory is an upper bound on $\K(D)$. The search for shorter descriptions is
+the search for a tighter bound. The fact that the true minimum is uncomputable
+is precisely why the search never ends.
+
+\subsection{MDL as the Computable Approximation}
+
+The Minimum Description Length principle~\cite{rissanen1978} replaces $\K$
+with a description length under a fixed coding scheme. For a parametric model
+$H$ with parameters $\theta$:
+\[
+  L(H) + L(D \mid H) = L(\theta) - \log P(D \mid \theta)
+\]
+This is computable for any fixed model class and coding scheme. MDL is
+model-selection consistent: as data grows, it converges to the true model
+when the true model is in the hypothesis class. It reduces overfitting by
+penalizing complexity directly, without ad hoc regularization.
+
+The relationship to Bayes is exact. Under a prior $P(H) \propto 2^{-L(H)}$:
+\[
+  \log P(H \mid D) = -L(H) + \log P(D \mid H) + \text{const} = -\MDL(H,D) + \text{const}
+\]
+Maximizing the Bayesian posterior is equivalent to minimizing MDL, for the
+right choice of prior and coding scheme.
+
+\subsection{Connections to Information Theory}
+
+The expected Kolmogorov complexity of a draw from a computable distribution
+$P$ equals its Shannon entropy $H(P)$ up to lower-order terms:
+\[
+  \mathbb{E}[K(X)] \approx H(X).
+\]
+Shannon entropy is Kolmogorov complexity averaged over a distribution.
+Kolmogorov complexity is the pointwise version: it applies to individual
+strings, without requiring a distribution. When you have a single string and
+want to know how much structure it has---without committing to a probability
+model---Kolmogorov complexity is the right tool.
+
+Lossless compression (gzip, bzip2, zstd) provides empirical upper bounds on
+$\K$. A string that compresses well has low $\K$; one that does not compress
+has high $\K$. This means compression ratio is a practical proxy for
+structural complexity, usable without specifying any explicit model.

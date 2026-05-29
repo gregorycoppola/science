@@ -1,0 +1,92 @@
+\section{Verification and the Present Moment}
+
+\subsection{The Search/Verify Asymmetry}
+
+The objective function tells us what science is optimizing. Running the
+optimization loop requires solving a different problem: given a proposed
+hypothesis $H$, how do you verify that it actually advances the objective?
+
+The key structural fact:
+\begin{quote}
+  Finding a good $H$ is hard. Verifying a proposed $H$ is cheap.
+\end{quote}
+This asymmetry is not incidental. It is a feature of the Kolmogorov
+framework, and it is the design principle behind every sound verification
+protocol. Finding the shortest program for $x$ requires searching an infinite
+space. Checking whether a proposed program outputs $x$ requires only running
+it.
+
+\subsection{Algorithmic Verification}
+
+For claims in the verifiable domain, verification can be automated.
+
+\textbf{Formal proof checking.} If a hypothesis is expressed as a theorem
+with a machine-checkable proof (Lean~4, Coq, Isabelle), verification is
+linear in proof length. The checker evaluates the \emph{object}, not the
+source. A proof submitted by an unknown agent is as valid as one submitted
+by a Fields Medalist, if it type-checks. This is the purest instantiation of
+the Kolmogorov principle.
+
+\textbf{Empirical reproduction.} Given code, weights, and data, rerun the
+experiment. Does the reported metric reproduce? This is cheap relative to
+the original research cost and provides a binary signal.
+
+\textbf{Compression-based verification.} Does the proposed theory compress
+the data better than the incumbent? MDL makes this a computable number.
+Given a fixed coding scheme, compute $L(H) + L(D \mid H)$ for the new theory
+and for the incumbent. If the new value is lower, the theory advances the
+objective. No subjective judgment required.
+
+\subsection{The Untrusted Source Principle}
+
+The most important design principle for any verification system:
+\begin{quote}
+  The verifier does not need to trust the source.
+\end{quote}
+Under the Kolmogorov framework, a hypothesis is evaluated on its length and
+its predictive accuracy---properties of the object itself. The identity,
+credentials, or intentions of whoever proposed it are irrelevant to its truth.
+
+This is an engineering requirement, not just a philosophical point. A
+distributed AutoResearch system cannot verify the identity or intent of every
+contributing agent. But if verification is a property of the object (does the
+proof type-check? does the loss decrease? does the description length shrink?),
+the system can accept submissions from arbitrary untrusted sources and remain
+sound. The math is the trust anchor.
+
+\subsection{Why This Matters Now}
+
+Two developments make the framework more than a philosophical exercise.
+
+\textbf{Autonomous AI research.} Systems like Karpathy's AutoResearch close
+the optimization loop at the level of ML experiments: propose a modification,
+verify whether it reduces the loss, keep it if it does, repeat. This is
+Solomonoff induction approximated by the only means available: a computable,
+distributed, heuristic search over hypothesis space, with cheap verification
+at each step.
+
+\textbf{Machine-verified formal proof.} Large proofs in Lean~4 and Coq are
+being produced and verified at scale. The verification is automated; the
+search (finding the proof) is expensive; the check (type-checking) is cheap.
+The asymmetry is the same.
+
+Both represent the first time the optimization loop of science can be
+partially automated. The objective function---minimize $L(H) + L(D \mid H)$---
+is the same as it has always been. What is new is the infrastructure to
+approximate it at scale.
+
+\subsection{Conclusion}
+
+The history of philosophy of science is a record of humanity circling a
+single structure---the problem of optimal inference in a computable
+world---without the mathematical tools to see it directly. Hume identified
+the core impossibility. Popper, Kuhn, and Lakatos each described a facet
+of the solution without being able to state it. The Bayesian tradition
+formalized the update rule. Kolmogorov and Solomonoff formalized the prior.
+
+The tools now exist to state the full solution. Science is the distributed
+search for hypotheses that minimize description length. Verification is cheap
+relative to discovery. The prior is the Solomonoff prior. The update rule is
+Bayes' rule. The objective function is MDL.
+
+Everything else is details.
