@@ -1,0 +1,89 @@
+\section{The Objective Function}
+
+\subsection{The Claim}
+
+Science finds short descriptions of large bodies of observations. The right
+way to formalize ``short description'' is Kolmogorov complexity. The right
+way to formalize ``finds'' is Bayesian inference with the Solomonoff prior.
+Everything else in this paper is unpacking those three sentences.
+
+The formal statement. Let $H$ be a hypothesis---a theory, a model, a
+program---and let $D$ be observed data. The objective function for science is:
+\begin{equation}
+  \text{maximize} \quad \log P(H \mid D)
+  = \log P(D \mid H) + \log P(H) + \text{const}
+  \label{eq:bayes}
+\end{equation}
+by Bayes' rule, where $P(D \mid H)$ is the likelihood and $P(H)$ is the
+prior. This is uncontroversial as a framework. The only question is: what
+prior?
+
+\subsection{The Prior Problem}
+
+If the prior $P(H)$ can be chosen arbitrarily, Bayes' rule is a framework,
+not a complete theory. Two scientists with different priors will reach
+different posteriors from the same data. The standard objection to
+Bayesianism is that this makes science subjective.
+
+The Kolmogorov/Solomonoff answer: the prior is not arbitrary. There is a
+unique, principled choice grounded in the theory of computation.
+
+\subsection{The Solomonoff Prior}
+
+The Kolmogorov complexity $\K(x)$ of a string $x$ is the length of the
+shortest program (on a fixed universal Turing machine $U$) that outputs $x$
+and halts:
+\[
+  \K(x) = \min\{ |p| : U(p) = x \}.
+\]
+Solomonoff~\cite{solomonoff1964} proposed assigning to each hypothesis $H$
+the prior:
+\[
+  P(H) \propto 2^{-\K(H)}.
+\]
+Simpler hypotheses---those with shorter generators---receive exponentially
+higher prior probability. This is Occam's Razor, derived from first
+principles rather than assumed as a philosophical preference.
+
+The Solomonoff prior is \emph{universal}: for any computable probability
+distribution $P$ over strings, there exists a constant $c_P$ such that
+$M(x) \geq c_P \cdot P(x)$ for all strings $x$, where $M$ is the Solomonoff
+measure. No computable prior assigns more probability to any hypothesis than
+$M$ does, up to a fixed factor. The prior dominates every computable
+alternative.
+
+\subsection{Minimum Description Length}
+
+Because $\K$ is uncomputable (Section~\ref{sec:kolmogorov}), the practical
+version is the Minimum Description Length (MDL) principle~\cite{rissanen1978}.
+Instead of the shortest program, use the shortest description under a fixed
+code. The objective becomes:
+\begin{equation}
+  \text{minimize} \quad L(H) + L(D \mid H)
+  \label{eq:mdl}
+\end{equation}
+where $L(H)$ is the description length of the hypothesis and $L(D \mid H)$
+is the description length of the data given the hypothesis (the negative
+log-likelihood under a specific coding scheme).
+
+The two terms trade off directly. $L(H)$ penalizes complexity: a theory that
+is too elaborate spends too many bits describing itself. $L(D \mid H)$
+penalizes poor fit: a theory that predicts the data badly leaves many residual
+bits to transmit. The optimum is the theory that compresses the combined
+description most. Science is the search for short two-part codes for the world.
+
+\subsection{Occam's Razor, Derived}
+
+A consequence worth stating explicitly: two theories that predict the data
+equally well are not equally good. The simpler one has higher posterior. A
+more complex theory must predict the data \emph{better} to compensate for its
+higher complexity penalty. The scientist who adds epicycles to save a theory is
+doing something formally wrong: increasing $\K(H)$ without a commensurate gain
+in $\log P(D \mid H)$.
+
+The objective function is \emph{objective} in both senses of the word: it is
+a target (something to minimize) and it is observer-independent (grounded in
+the structure of computation, not in any particular scientist's preferences).
+The Solomonoff prior is invariant across observers up to a fixed constant
+determined by the choice of universal Turing machine---not by whoever is doing
+the science.

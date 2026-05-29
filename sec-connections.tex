@@ -1,0 +1,230 @@
+\section{Ten Identifications}
+\label{sec:connections}
+
+The directories of the \texttt{science} repo were built separately. This
+section is about what happens when those threads cross. The cases below are
+not analogies---loose, suggestive comparisons. They are \emph{identifications}:
+cases where two ideas from different traditions turn out to be the same idea,
+expressed in different language, developed by people who were not talking to
+each other. The convergence is evidence that something real is being pointed at.
+
+\subsection{Hume's Problem Is the Halting Problem}
+
+Hume showed that induction cannot be logically justified: you cannot know,
+from finite observations, that a universal law holds. Turing showed that
+you cannot decide, in general, whether a program halts.
+
+These are the same result. A universal law is a short program---a generator
+for an infinite class of observations. Confirming the law means certifying
+that the proposed program is the shortest consistent with the data. But
+certifying that no shorter program exists requires checking whether every
+shorter program eventually fails to match the data---instances of the halting
+problem. Since the halting problem is undecidable, $\K(x)$ is uncomputable,
+and induction cannot be deductively justified.
+
+The reason you cannot justify induction is the same reason $\K(x)$ is
+uncomputable. Hume's problem is not a philosophical puzzle awaiting a
+philosophical solution. It is an undecidability result, and it has the same
+status as the halting problem: provably unsolvable, not merely unsolved.
+
+What can be done---and what the Bayesian/Kolmogorov framework does---is show
+that the impossibility of certainty does not prevent optimal inference.
+Solomonoff induction is provably optimal for prediction in any computable
+environment. The gap between ``optimal'' and ``certain'' is exactly the gap
+between computable approximations to $\K(x)$ and $\K(x)$ itself.
+
+\subsection{Paradigm Shifts Are MDL Phase Transitions}
+
+Kuhn described paradigm shifts as discontinuous and partly irrational. Under
+MDL, they are mathematically inevitable and perfectly rational.
+
+A paradigm is a hypothesis class---a family of theories sharing common
+structure. Normal science is optimization within the class: adjusting
+parameters, adding auxiliary hypotheses, refining the model. Each adjustment
+is legitimate as long as it decreases total description length.
+
+A paradigm shift occurs when a competing hypothesis class achieves lower
+$L(H) + L(D \mid H)$ than the incumbent with all its protective belt
+modifications. The shift is discontinuous because hypothesis classes are
+discrete objects: you cannot smoothly interpolate between Ptolemaic and
+Copernican astronomy. But it is not irrational. The new paradigm wins because
+it compresses the data better.
+
+The discontinuity is a phase transition in the physics sense: a sharp change
+in the optimal state of the system (which paradigm minimizes description
+length) as a continuous parameter (accumulated data) crosses a threshold.
+Kuhn correctly identified the phenomenology of phase transitions in
+scientific knowledge. MDL provides the thermodynamics underneath.
+
+\subsection{Popper's Corroboration Is Bayesian Updating Without the Prior}
+
+Popper's corroboration measure, precisely defined~\cite{popper1954}, is:
+\[
+  C(H, E) = \frac{P(E \mid H) - P(E)}{P(E \mid H) - P(E \cdot H) + P(E)}
+\]
+This is a normalized likelihood ratio: how much more probable $E$ is under
+$H$ than under the background probability of $E$. It is purely a function of
+likelihoods. It does not involve the prior $P(H)$.
+
+In Bayesian terms, Popper was computing exactly half of the update:
+\[
+  P(H \mid E) \propto \underbrace{P(E \mid H)}_{\text{Popper's corroboration}} \cdot \underbrace{P(H)}_{\text{refused}}
+\]
+He refused the prior because he found subjective probability unacceptable.
+He was right to find it unacceptable; he was wrong to conclude the prior must
+be abandoned. The Solomonoff prior $P(H) \propto 2^{-\K(H)}$ is objective:
+a property of the hypothesis itself, invariant across observers. With it,
+corroboration becomes posterior probability, and the refusal of induction
+dissolves.
+
+\subsection{The Replication Crisis Is an MDL Accounting Error}
+
+The replication crisis in psychology and social science resulted from
+p-hacking: testing many hypotheses and reporting only those achieving
+$p < 0.05$. This is an MDL accounting error.
+
+When a researcher tests $N$ hypotheses and reports the best, the true
+description length of the reported hypothesis is not $L(H_{\text{reported}})$.
+It is:
+\[
+  L(H_{\text{reported}}) + \log_2 N
+\]
+The extra $\log_2 N$ bits is the cost of the search: the information required
+to specify which of the $N$ tested hypotheses was selected. Omitting this cost
+produces apparent results that do not replicate, because the apparent
+compression of the data was illusory.
+
+The Bonferroni correction---adjusting the significance threshold by $N$---is
+exactly the MDL accounting correction. It has always been the right thing to
+do. The replication crisis is the empirical consequence of not doing it.
+
+The reforms that followed---preregistration, larger samples, direct
+replication, Bayesian model comparison---are all corrections toward honest
+MDL accounting. Preregistration eliminates search cost from $L(H)$.
+Preregistered studies have lower description length overhead, and their
+results generalize because the $L(H)$ term is honest.
+
+\subsection{Lakatos's Progressive vs.\ Degenerating Is Compression Growth vs.\ Decay}
+
+Lakatos's distinction between progressive and degenerating research
+programmes, translated into MDL:
+
+A \emph{progressive} programme makes protective belt modifications that
+decrease $L(H) + L(D \mid H)$ on new data. The modifications are short
+(do not bloat description length) and genuinely compress new observations.
+
+A \emph{degenerating} programme makes modifications that increase $L(H)$---
+the hypothesis grows more complex---without decreasing $L(D \mid H)$ on new
+observations. The programme adds complexity without adding compression.
+
+Lakatos gave the right criterion for evaluating research programmes; MDL
+makes it computable. The qualitative judgment (is this modification
+progressive or defensive?) becomes a quantitative one (does
+$\Delta L(H) + \Delta L(D \mid H)$ on new data decrease or increase?).
+
+\subsection{Kant's Synthetic A Priori Is Lakatos's Hard Core}
+
+Kant argued that some commitments---space, time, causality---are
+preconditions of experience: they cannot be revised because they are what
+makes experience possible. Lakatos argued that every research programme has
+a hard core of commitments that are methodologically protected from
+falsification.
+
+These are the same idea. The difference is that Lakatos made them revisable
+in principle: a research programme can be abandoned, hard core and all.
+This is the correct update on Kant after non-Euclidean geometry falsified
+his specific candidates (Euclidean space as a synthetic a priori). Lakatos
+is Kant, empiricized.
+
+Under the MDL framework, the hard core is the prior commitment to a
+hypothesis class. It is protected not by necessity but by the cost of
+switching to a different class (learning a new framework, retranslating
+existing results). The protection is finite and can be overcome by sufficient
+data. Kant's absolute preconditions become Lakatos's methodological
+conventions, which become MDL's hypothesis-class priors.
+
+\subsection{Feyerabend's ``Anything Goes'' Is the Solomonoff Prior}
+
+Feyerabend argued that no methodological rule holds universally: every rule
+that science has ever followed has been violated productively at some point.
+``Anything goes'' as a description of scientific practice.
+
+The Solomonoff prior assigns $P(H) \propto 2^{-\K(H)} > 0$ to every
+computable hypothesis. No hypothesis is excluded before the data speaks.
+This is precisely Feyerabend's permissiveness, formalized. A prior that
+excludes any computable hypothesis---that declares some class of ideas
+unscientific by methodological fiat---is provably suboptimal. The data
+might support the excluded hypothesis, and a reasoner that cannot entertain
+it incurs irreducible regret.
+
+What Feyerabend called anarchism is, from the Kolmogorov perspective, the
+universality of the prior. His insight was correct; his framing was
+unnecessarily provocative.
+
+\subsection{Hallucination and Perceptual Illusions Are the Same Failure Mode}
+
+In predictive coding~\cite{rao1999}, the dominant framework in theoretical
+neuroscience, the brain is a hierarchical generative system: higher areas
+send predictions down the cortical hierarchy; lower areas send prediction
+errors up. Perception is inference: the brain computes the posterior
+distribution over world-states given sensory inputs, using priors built from
+evolution and experience.
+
+A perceptual illusion occurs when the prior is so strong that sensory
+evidence cannot correct it. The hollow mask illusion is the canonical
+example: a hollow face mask looks convex because the prior for convex faces
+is overwhelming. The brain refuses to believe the correct interpretation.
+
+In a language model, hallucination occurs when the prior over likely
+continuations overwhelms the grounding signal from the context. The model
+generates a continuation that is statistically plausible given training
+distribution but inconsistent with the specific facts in the prompt.
+
+Both are the same Bayesian failure: the prior dominates the likelihood. The
+hollow mask illusion and language model confabulation are not analogous
+phenomena. They are the same computational pathology, instantiated in
+different substrates.
+
+\subsection{The Bayesian Brain and the Transformer Are the Same Architecture}
+
+Predictive coding models the brain as performing belief propagation on a
+hierarchical factor graph~\cite{friston2005}: predictions propagate top-down,
+prediction errors propagate bottom-up, and the system minimizes free energy
+(variational approximation to surprise).
+
+The transformer implements exact belief propagation on a specific factor
+graph~\cite{coppola2026}: the attention mechanism computes AND-type joint
+beliefs over query-key pairs; the feed-forward network computes OR-type
+disjunctive updates; the residual stream is the shared message-passing bus.
+
+These are not analogies. They are the same algorithm instantiated on
+different graphs. The brain and the transformer are doing the same
+computation. The differences are in the graph structure, the learning
+algorithm, and the substrate---not in the fundamental operation.
+
+\subsection{AutoResearch Is Solomonoff Induction Made Computable and Distributed}
+
+Solomonoff induction is uncomputable but is the provably optimal prediction
+strategy. Karpathy's AutoResearch system~\cite{karpathy2026} is a computable,
+distributed approximation to it.
+
+The correspondences are structural. The hypothesis space is the space of
+training scripts and model configurations---a computable, enumerable space.
+The reward signal (validation loss, benchmark accuracy) approximates
+$P(D \mid H)$: lower loss means higher likelihood of the training data under
+the modified hypothesis. The keep/discard decision approximates the Bayesian
+posterior update. The agent's tendency to propose local modifications first
+is an implicit Kolmogorov prior: smaller modifications correspond to lower
+description length.
+
+The key insight Karpathy identified---finding a good result is hard, but
+verifying one is cheap---is exactly the search/verify asymmetry in Solomonoff
+induction. The search over hypothesis space is expensive; checking whether a
+proposed hypothesis compresses the data better is cheap. The distributed,
+SETI@Home-style architecture parallelizes the search over hypothesis space.
+
+Crucially, AutoResearch accepts contributions from untrusted sources. A
+modification is evaluated by whether it reduces description length of the
+training data---a property of the modification itself. The source is
+irrelevant. This is the Kolmogorov principle applied to institutions:
+\emph{trust the object, not the messenger}.

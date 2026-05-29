@@ -1,0 +1,93 @@
+\section{The History of Philosophy of Science as a Single Argument}
+
+The history of philosophy of science is a single long argument about one
+problem: Hume's problem of induction. Every major movement is either a
+response to it, a refinement of a previous response, or an attempt to
+dissolve it. The Bayesian/Kolmogorov framework is where the argument arrives.
+We trace the through-line here, briefly; each movement clarifies what the
+framework is solving.
+
+\subsection{Hume: The Impossibility}
+
+David Hume~\cite{hume1748} identified the deepest problem in the philosophy
+of science. The problem of induction: no finite set of observations logically
+justifies a universal law. The inference from ``all observed $F$s are $G$s''
+to ``all $F$s are $G$s'' is not deductively valid. You can observe a million
+white swans; the next one might be black. It was, in Australia.
+
+Worse: the obvious response---induction is justified because it has worked in
+the past---is itself an inductive argument. The justification is circular.
+Hume concluded that inductive inference is a matter of psychological habit,
+not reason.
+
+\subsection{Popper: The Right Asymmetry, the Wrong Conclusion}
+
+Karl Popper~\cite{popper1934} noticed that confirmation is logically weak
+while falsification is logically strong. No number of white swans proves the
+law; one black swan refutes it. He proposed falsifiability as the
+demarcation criterion for science and characterized scientific progress as
+conjecture and refutation: bold hypotheses, then honest attempts to falsify
+them.
+
+Popper was right about the asymmetry and right that unfalsifiable theories
+are scientifically empty. He was wrong to conclude that science involves no
+induction. His ``corroboration'' measure---how well a theory has survived
+tests---is, precisely defined, the Bayesian likelihood ratio $P(E \mid H) /
+P(E \mid \neg H)$: the update factor, stripped of the prior he refused to use.
+Popper computed the right quantity and declined to multiply by the prior.
+The Solomonoff prior completes his programme.
+
+\subsection{Kuhn: The Right Phenomenology, No Normative Theory}
+
+Thomas Kuhn~\cite{kuhn1962} argued that Popper's account does not match how
+science actually works. Scientists operate within \emph{paradigms}---shared
+frameworks of assumptions and methods---and do not abandon them at the first
+anomaly. When anomalies accumulate to the point where confidence breaks down,
+a revolution occurs: one paradigm replaces another, discontinuously.
+
+Kuhn correctly described the phenomenology. He lacked a normative account:
+when \emph{should} a paradigm shift occur? The MDL framework supplies the
+answer (Section~\ref{sec:connections}).
+
+\subsection{Lakatos: The Right Criterion, Incompletely Formalized}
+
+Imre Lakatos~\cite{lakatos1978} synthesized Popper and Kuhn via the
+methodology of scientific research programmes. Each programme has a
+\emph{hard core} of protected assumptions and a \emph{protective belt} of
+auxiliary hypotheses that absorb anomalies. A programme is \emph{progressive}
+if its protective belt modifications generate new confirmed predictions;
+\emph{degenerating} if they only explain known anomalies without predicting
+new ones.
+
+Under MDL, a progressive programme is one where successive modifications
+decrease $L(H) + L(D \mid H)$ on new data. A degenerating programme is one
+where modifications increase $L(H)$ without decreasing $L(D \mid H)$ on new
+observations. Lakatos gave the right criterion; MDL makes it computable.
+
+\subsection{Feyerabend: Methodological Anarchism as the Solomonoff Prior}
+
+Paul Feyerabend~\cite{feyerabend1975} argued that no hypothesis should be
+ruled out \emph{a priori}: science has always advanced by entertaining ideas
+that violated current methodological rules. ``Anything goes'' as a prior
+policy.
+
+The Solomonoff prior assigns nonzero probability to every computable
+hypothesis. Nothing is excluded before the data speaks. Feyerabend's
+permissiveness is not anarchism---it is the correct prior policy. A prior
+that excludes any computable hypothesis is provably suboptimal. What
+Feyerabend called anarchism, Solomonoff called universality.
+
+\subsection{Bayesian Confirmation: The Culmination}
+
+Bayesian confirmation theory~\cite{howson2006} provides the most complete
+response to Hume. Evidence $E$ confirms $H$ if and only if $P(H \mid E) >
+P(H)$; the degree of confirmation is the likelihood ratio $P(E \mid H) /
+P(E)$. This dissolves the raven paradox (observing a red fire engine confirms
+``all ravens are black,'' but only infinitesimally), handles old evidence via
+counterfactual reasoning, and validates Lakatos's distinction as a distinction
+between increasing and decreasing marginal likelihood.
+
+Carnap spent his career trying to construct an inductive logic---a formal
+system that would determine the degree of confirmation of any hypothesis by
+any evidence. He never succeeded because he had no principled account of the
+prior. The Solomonoff prior completes the programme he started.
