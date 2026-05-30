@@ -196,10 +196,10 @@ distinguish it from \texttt{05\_use\_builtin}.
 
 This is the Karpathy gap: Karpathy's \texttt{val\_bpb} is
 $L(D \mid H)$ in QBBN coding (Section~\ref{sec:coding}) without
-$L(H)$. The gap is not a toy artifact. By the \texttt{shannon} result,
-transformers implement exact BP on QBBN-structured factor graphs, so
-every transformer trained to minimize validation loss without an
-explicit complexity penalty is running the same incomplete objective.
-The missing term is $L(H)$. Adding it completes MDL and prevents
-accumulating complexity over hundreds of iterations whenever doing so
-does not hurt validation loss.
+$L(H)$. The gap is not a toy artifact. Coppola~\cite{coppola2026}
+proves that sigmoid transformers implement exact BP on
+QBBN-structured factor graphs, so every transformer trained to minimize
+validation loss without an explicit complexity penalty is running the
+same incomplete objective. The missing term is $L(H)$. Adding it
+completes MDL and prevents accumulating complexity over hundreds of
+iterations whenever doing so does not hurt validation loss.

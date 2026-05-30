@@ -132,10 +132,9 @@ amortizes theory cost over growing datasets.
 \subsection{The Transformer as Independent Alignment Evidence}
 
 The coding scheme argument gains additional force from an independent
-direction. The \texttt{shannon} paper~\cite{coppola2026} proves that
-sigmoid transformers implement exact belief propagation on
-QBBN-structured factor graphs. Specifically, for the sigmoid
-transformer architecture:
+direction. Coppola~\cite{coppola2026} proves that sigmoid transformers
+implement exact belief propagation on QBBN-structured factor graphs.
+Specifically, for the sigmoid transformer architecture:
 \begin{itemize}
   \item Attention heads implement AND-type joint beliefs over
         query-key pairs---the AND gate computation of the QBBN.
@@ -157,13 +156,13 @@ $L(D \mid H)$ where $H$ has QBBN structure. The QBBN coding scheme
 emerges from the optimization, not from the design.
 
 This has a direct implication for the Karpathy gap
-(Section~\ref{sec:experiments-code}). The gap we demonstrated on toy
+(Section~\ref{sec:experiments-code}). The gap demonstrated on toy
 sort programs applies, in principle, to transformer training: a model
 trained to minimize validation loss without an explicit $L(H)$ penalty
-will accumulate complexity in the OR weights whenever doing so does not
-hurt validation loss. Adding an explicit $L(H)$ penalty---compressed
-size of the weight matrix, added to the training objective---would
-complete the MDL objective in QBBN coding.
+will accumulate complexity in the OR weights whenever doing so does
+not hurt validation loss. Adding an explicit $L(H)$ penalty---the
+compressed size of the weight matrix, added to the training
+objective---would complete the MDL objective in QBBN coding.
 
 \subsection{The Open Problem}
 
