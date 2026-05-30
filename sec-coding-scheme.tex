@@ -32,24 +32,28 @@ This is the coding scheme problem: to have a complete formal theory of
 science, we need a single coding scheme that is simultaneously
 \emph{universal} (covering all scientific hypotheses),
 \emph{generative} (assigning likelihoods to data), and
-\emph{tractable} (computable in practice).
+\emph{tractable} (computable in practice). No known scheme achieves
+all three. This section argues that the QBBN is the strongest known
+candidate for the logical/propositional fragment of scientific
+hypotheses---not a solved universal coding scheme, but a well-motivated
+approximation that covers a broad and important domain.
 
-\subsection{What a Universal Practical Coding Scheme Requires}
+\subsection{What a Practical Coding Scheme Requires}
 
-A coding scheme for scientific hypotheses must satisfy four
-properties to serve as a universal practical approximation to the
-Kolmogorov prior:
+A coding scheme for scientific hypotheses must satisfy four properties
+to serve as a useful approximation to the Kolmogorov prior:
 
 \begin{enumerate}
 
-\item \textbf{Universality.} The hypothesis space must cover all
-scientifically expressible claims. Since all of mathematics and
-science can be expressed in first-order logic
-(FOL)~\cite{coppola2024qbbn}, a coding scheme is universal in the
-relevant sense if it can represent any FOL formula.
+\item \textbf{Coverage.} The hypothesis space should cover a broad
+class of scientifically expressible claims. Since all of mathematics
+and science can be expressed in first-order logic
+(FOL)~\cite{coppola2024qbbn}, a coding scheme that can represent any
+FOL formula covers the logical fragment of science---which is most of
+what formal science requires.
 
 \item \textbf{Generativity.} The coding scheme must define a joint
-probability distribution over propositions---it must assign
+probability distribution over observations---it must assign
 $P(D \mid H)$ for any dataset $D$ and hypothesis $H$. Without
 generativity, you cannot compute $L(D \mid H)$ and the MDL objective
 is not defined. This rules out pure theorem provers, which give truth
@@ -57,91 +61,81 @@ values but not probabilities.
 
 \item \textbf{Tractability.} The likelihoods $P(D \mid H)$ must be
 computable in reasonable time. Exact inference in general Bayesian
-networks is \#P-complete; a universal scheme needs a tractable
-approximation.
+networks is \#P-complete; a practical coding scheme needs a tractable
+approximation that is empirically reliable.
 
 \item \textbf{Structural transparency.} The coding scheme should make
 the structure of a hypothesis explicit---which parts are the hard
 logical constraints and which parts are the learned statistical
 weights. This is what allows $L(H)$ to be decomposed into a structure
-cost and a weight cost, connecting the coding scheme to the
-Kolmogorov prior's notion of program length.
+cost and a weight cost, connecting the coding scheme to the Kolmogorov
+prior's notion of program length.
 
 \end{enumerate}
 
-No existing system satisfies all four. Pure FOL theorem provers
-satisfy (1) and (4) but not (2) or (3). Markov Logic
-Networks~\cite{coppola2024qbbn} satisfy (1) and (2) but not (3):
-inference is \#P-complete and requires MCMC approximation. Neural
+No existing system satisfies all four simultaneously for the full
+scope of scientific hypotheses. Pure FOL theorem provers satisfy (1)
+and (4) but not (2) or (3). Markov Logic Networks~\cite{coppola2024qbbn}
+satisfy (1) and (2) but not (3): inference is \#P-complete. Neural
 networks satisfy (2) and (3) but not (1) or (4): they approximate
-logical structure without representing it explicitly, and their
-hypothesis space is the space of weight configurations, not logical
-propositions.
+logical structure without representing it explicitly.
 
-\subsection{The QBBN as the Best Known Candidate}
+\subsection{The QBBN as a Candidate Coding Scheme for Logical Hypotheses}
 
 The Quantified Boolean Bayesian Network
-(QBBN)~\cite{coppola2024qbbn} is the best known candidate for a
-universal practical coding scheme. It satisfies all four properties.
+(QBBN)~\cite{coppola2024qbbn} is the strongest known candidate for a
+coding scheme covering logical/propositional hypotheses. It satisfies
+all four properties within that domain.
 
-\textbf{Universality (FOL completeness).} The QBBN paper proves that
-any first-order logical formula can be expressed as a QBBN factor
-graph. The QBBN is complete over FOL in the same sense that FOL is
-complete over mathematics and science: any claim that can be stated
-precisely can be stated as a QBBN.
+\textbf{Coverage (FOL completeness).} The QBBN paper proves that any
+first-order logical formula can be expressed as a QBBN factor graph.
+The QBBN covers the logical fragment of science---any claim that can
+be stated in FOL can be stated as a QBBN.
 
 \textbf{Generativity.} The QBBN defines a joint probability
-distribution over boolean propositions via its factor graph. The AND
-gates are deterministic (they implement exact boolean conjunction);
-the OR gates are learned linear exponential models that assign
-conditional probabilities. Together they define $P(D \mid H)$ for any
-dataset $D$ of boolean observations.
+distribution over boolean propositions via its factor graph. AND gates
+are deterministic (exact boolean conjunction); OR gates are learned
+linear exponential models that assign conditional probabilities.
+Together they define $P(D \mid H)$ for any dataset $D$ of boolean
+observations.
 
 \textbf{Tractability.} Inference in the QBBN uses belief propagation
 (BP) on the AND/OR bipartite factor graph. Exact BP is polynomial on
-trees; on loopy graphs it is an approximation, but the QBBN paper
-reports empirical convergence in all tested cases. The bipartite
-AND/OR structure---alternating conjunction and disjunction
-layers---is the key architectural choice that makes BP tractable:
-conjunction nodes are deterministic (no learned parameters, $O(2^n)$
-but constant in practice for small conjuncts), and disjunction nodes
-admit $O(n)$ updates under the Noisy-OR approximation.
+trees; on loopy graphs it is an approximation. The QBBN paper reports
+empirical convergence in all tested cases. The bipartite AND/OR
+structure---alternating conjunction and disjunction layers---is the
+key architectural choice: conjunction nodes are deterministic, and
+disjunction nodes admit $O(n)$ updates under the Noisy-OR
+approximation.
 
 \textbf{Structural transparency.} The AND/OR decomposition makes the
-structure of a hypothesis explicit. AND gates represent the hard
-logical constraints---the ``program'' part of the hypothesis. OR gates
-represent the learned statistical weights---the ``parameter'' part.
-The description length of the hypothesis is:
+structure of a hypothesis explicit. AND gates represent hard logical
+constraints---the ``program'' part. OR gates represent learned
+statistical weights---the ``parameter'' part. The description length
+decomposes as:
 \[
   L(H) = L(\text{AND structure}) + L(\text{OR weights})
 \]
-The AND structure is the set of implication links---which premises
-conjoin to produce which conclusions. Each link costs a fixed number
-of bits to specify (its type and participating propositions). The OR
-weights are the conditional probabilities learned for each disjunction
-node; each weight costs $w$ bits to encode at $w$-bit precision. This
-maps directly onto the Kolmogorov prior: AND structure corresponds to
-program structure (fixed overhead per instruction), OR weights
-correspond to program parameters (variable, proportional to
-precision).
+Each implication link costs a fixed number of bits to specify (its
+type and participating propositions). Each OR weight costs $w$ bits
+at $w$-bit precision. This maps directly onto the Kolmogorov prior:
+AND structure corresponds to program structure (fixed overhead per
+instruction), OR weights to program parameters (variable, proportional
+to precision).
 
 The \texttt{mdl-science} experiments in
 Section~\ref{sec:experiments-logic} instantiate this coding scheme
-directly. Each experiment uses QBBN theories---implication links and
-conjunctive links---and computes MDL scores that reflect the true
-$L(H) + L(D \mid H)$ under QBBN coding. The results (conjunctive
-structure wins, theories are amortized, MDL selects correct
-complexity) are consequences of the coding scheme's alignment with the
-true generative structure.
+directly and show that MDL in QBBN coding selects correct structure,
+penalizes spurious complexity by exactly its description length, and
+amortizes theory cost over growing datasets.
 
-\subsection{The Transformer as Independent Confirmation}
+\subsection{The Transformer as Independent Alignment Evidence}
 
 The coding scheme argument gains additional force from an independent
-direction: the \texttt{shannon} paper~\cite{coppola2026} proves that
-transformers implement exact belief propagation on QBBN-structured
-factor graphs.
-
-Specifically, the paper shows that:
+direction. The \texttt{shannon} paper~\cite{coppola2026} proves that
+sigmoid transformers implement exact belief propagation on
+QBBN-structured factor graphs. Specifically, for the sigmoid
+transformer architecture:
 \begin{itemize}
   \item Attention heads implement AND-type joint beliefs over
         query-key pairs---the AND gate computation of the QBBN.
@@ -150,35 +144,36 @@ Specifically, the paper shows that:
   \item The residual stream is the shared message-passing bus---the
         variable nodes of the QBBN factor graph.
 \end{itemize}
+For other transformer variants, the correspondence is approximate
+rather than exact, but the AND/OR bipartite structure is preserved.
 
-This means that a transformer trained by gradient descent on
-next-token prediction is implicitly minimizing $L(D \mid H)$ where
-$H$ is parameterized as a QBBN factor graph. The QBBN coding scheme
-is not a design choice imposed on top of transformer training---it is
-what transformer training discovers.
+This result does not prove that QBBN is the correct coding scheme for
+all transformers. What it suggests is that the QBBN coding scheme is
+not an arbitrary choice: it is structurally aligned with the
+message-passing architecture that gradient descent discovers when
+optimizing generative models over language. A transformer trained by
+gradient descent on next-token prediction is implicitly minimizing
+$L(D \mid H)$ where $H$ has QBBN structure. The QBBN coding scheme
+emerges from the optimization, not from the design.
 
 This has a direct implication for the Karpathy gap
 (Section~\ref{sec:experiments-code}). The gap we demonstrated on toy
-sort programs---full MDL achieves 65.2\% improvement while
-$L(D \mid H)$-only achieves 0\%---is not a toy result. It applies
-to every transformer trained without an explicit $L(H)$ penalty. A
-language model trained to minimize validation loss (= $L(D \mid H)$
-in QBBN coding) without any constraint on $L(H)$ will accumulate
-complexity in the OR weights whenever doing so does not hurt
-validation loss. The weight matrix grows without any signal that
-something is wrong. Adding an explicit $L(H)$ penalty---compressed
+sort programs applies, in principle, to transformer training: a model
+trained to minimize validation loss without an explicit $L(H)$ penalty
+will accumulate complexity in the OR weights whenever doing so does not
+hurt validation loss. Adding an explicit $L(H)$ penalty---compressed
 size of the weight matrix, added to the training objective---would
 complete the MDL objective in QBBN coding.
 
 \subsection{The Open Problem}
 
-The QBBN satisfies the four properties above for the domain of
-logical/propositional hypotheses. It does not solve the general
+The QBBN is a strong candidate coding scheme for
+logical/propositional hypotheses. It is not a solution to the general
 coding scheme problem.
 
 The open problem is cross-domain comparison. The QBBN gives a
 principled MDL ranking of QBBN theories against each other. It does
-not give a principled MDL ranking of a QBBN theory against, say, a
+not give a principled MDL ranking of a QBBN theory against a
 differential equation or a statistical regression model---because
 there is no shared coding scheme that covers all three. Such a ranking
 exists in principle: the Kolmogorov prior assigns description lengths
@@ -186,30 +181,18 @@ to all computable hypotheses, and the ranking is well-defined up to a
 constant. But computing it requires $\K(H)$, which is uncomputable.
 
 This is the computable residue of Hume's problem
-(Section~\ref{sec:connections}). Hume showed that induction cannot be
-deductively justified; we showed (in the Hume/Halting connection) that
-this is equivalent to the uncomputability of $\K$. The coding scheme
-problem is the same impossibility in engineering form: you cannot
-build a universal computable coding scheme for all scientific
-hypotheses for the same reason you cannot solve the halting problem.
+(Section~\ref{sec:connections}). The coding scheme problem is the same
+impossibility in engineering form: you cannot build a universal
+computable coding scheme for all scientific hypotheses for the same
+reason you cannot solve the halting problem.
 
-What you can do---and what this paper does---is:
-\begin{enumerate}
-  \item Identify the best known candidate for a universal coding
-        scheme within the logical/propositional domain (QBBN).
-  \item Show that this coding scheme connects to the dominant
-        practical architecture (transformers) via the
-        \texttt{shannon} result.
-  \item Demonstrate empirically that MDL in QBBN coding selects
-        correct structure, penalizes spurious complexity, and
-        amortizes over data as the theory predicts.
-  \item Name the open problem honestly: a universal computable coding
-        scheme covering all scientific domains does not yet exist.
-\end{enumerate}
-
-The Kolmogorov framework tells us such a scheme would exist if $\K$
-were computable. It also tells us $\K$ is not computable. The QBBN is
-the closest computable approximation currently known for the domain
-where science and logic intersect---which, given FOL's expressive
-completeness over mathematics and science, is most of the domain that
-matters.
+What this paper does is: identify the QBBN as the best known candidate
+within the logical/propositional domain; show that this domain is
+large (FOL covers all of mathematics and science); demonstrate
+empirically that MDL in QBBN coding behaves as the theory predicts;
+and name the open problem honestly. A universal computable coding
+scheme covering all scientific domains does not yet exist. The
+Kolmogorov framework tells us such a scheme would exist if $\K$ were
+computable. It also tells us $\K$ is not computable. The QBBN is the
+closest computable approximation currently known for the domain where
+science and logic intersect.
