@@ -15,7 +15,8 @@
 \newcommand{\MDL}{\mathrm{MDL}}
 \newcommand{\R}{\mathbb{R}}
 
-\title{Science Has an Objective Function}
+\title{The MDL Objective for Science:\\
+Theory, Coding Scheme, and Empirical Demonstrations}
 \author{Greg Coppola}
 \date{2026}
 
@@ -23,34 +24,37 @@
 \maketitle
 
 \begin{abstract}
-Science has always had an objective function. Written down, it is:
-minimize $L(H) + L(D \mid H)$, where $H$ is a hypothesis, $D$ is
-observed data, $L(H)$ is the description length of the hypothesis
-(approximating its Kolmogorov complexity), and $L(D \mid H)$ is the
-description length of the data given the hypothesis (the negative
-log-likelihood). This is the Minimum Description Length (MDL)
-principle---the computable approximation to Solomonoff induction.
-We make four contributions. First, we trace the history of philosophy
-of science as a single argument converging on this framework, and
-identify ten cases where independent traditions discovered the same
-structure in different language. Second, we argue that the Quantified
-Boolean Bayesian Network (QBBN)~\cite{coppola2024qbbn} is the
-strongest known candidate coding scheme for the logical/propositional
-fragment of scientific hypotheses: it is complete over first-order
+We propose Minimum Description Length (MDL)---minimize $L(H) +
+L(D \mid H)$, where $L(H)$ is the description length of a hypothesis
+and $L(D \mid H)$ is the negative log-likelihood of the data given the
+hypothesis---as a formal objective function for scientific theory
+selection. MDL is the computable approximation to Solomonoff
+induction, which is Bayesian inference with the Kolmogorov/Solomonoff
+prior. We make four contributions. First, we argue that the history of
+philosophy of science from Hume through Popper, Kuhn, Lakatos, and
+the Bayesian tradition is best understood as a sequence of partial
+approximations to this objective, and identify ten cases where
+independent traditions converged on the same structure in different
+language. Second, we identify a concrete coding scheme problem: MDL
+requires a way of assigning description lengths to hypotheses, and we
+argue that the Quantified Boolean Bayesian Network
+(QBBN)~\cite{coppola2024qbbn} is the strongest known candidate for
+the logical/propositional fragment---it is complete over first-order
 logic, generative, tractable via belief propagation, and structurally
-aligned with transformer architectures, which Coppola~\cite{coppola2026}
-proves implement exact belief propagation on QBBN-structured factor
-graphs. Third, we demonstrate the framework empirically in two domains:
-programs and code, where a new result shows current AutoResearch
-systems are one $L(H)$ term short of the full objective, accounting
-for a 65.2\% improvement on benchmark problems; and logical proposition
-datasets, where QBBN-coded MDL selects correct conjunctive structure,
-amortizes 8 bits of theory over 510 bits of savings at scale, and
-exhibits the discrete regularity crossover that instantiates Kuhn's
-paradigm shift at the bit level. Fourth, we argue that a system with
-the right objective function is doing science regardless of substrate:
-automated theorem proving with MDL is not adjacent to AGI---it is AGI.
-The objective function is MDL. We already know what it is.
+aligned with transformer architectures, which
+Coppola~\cite{coppola2026} proves implement exact belief propagation
+on QBBN-structured factor graphs. Third, we demonstrate the framework
+empirically in two domains: programs and code, where a new result
+shows current AutoResearch systems are one $L(H)$ term short of the
+full MDL objective, accounting for a 65.2\% improvement on benchmark
+problems; and logical proposition datasets, where QBBN-coded MDL
+selects correct conjunctive structure over disjunctive (18.4 bits
+saved), amortizes 8 bits of theory over 510 bits of savings at scale,
+and exhibits a discrete regularity crossover that instantiates Kuhn's
+paradigm shift mechanism at the bit level. Fourth, we argue that a
+system implementing the MDL objective is doing science in a formal
+sense regardless of substrate: a theorem-proving system with the right
+objective function is not merely adjacent to AGI---it is AGI.
 \end{abstract}
 
 \tableofcontents
