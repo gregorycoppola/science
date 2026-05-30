@@ -236,135 +236,157 @@ is the structure of the Quantified Boolean Bayesian Network
 (QBBN)~\cite{coppola2024qbbn}: conjunction nodes are deterministic AND
 gates; disjunction nodes are learned OR factors.
 
-The two-part code here is concrete. $L(H)$ counts the number of links
-times the bits required to specify each weight. $L(D \mid H)$ is the
-total negative log-likelihood of the observed propositions under the
-theory's conditional probabilities. The framework makes no other
-assumptions.
+The two-part code is concrete. $L(H)$ counts the number of links times
+the bits required to specify each weight---a fixed cost per link,
+independent of dataset size. $L(D \mid H)$ is the total negative
+log-likelihood of the observed propositions under the theory's
+conditional probabilities, computed via the empirical calibration of
+each link weight. For propositions not covered by any link, the coding
+falls back to the empirical base rate, ensuring the theory can only
+help---never hurt---on uncovered propositions.
 
 \subsection{Conjunctive Structure Wins (\texttt{mdl compress})}
 
 The \texttt{compress} experiment generates data where $r = p \wedge q$
-exactly, then fits six theories of increasing complexity and
-structural type:
+exactly ($n = 50$ triples), then fits six theories of different
+structural types. Results are reported as MDL score (lower is better)
+and bits saved versus the null theory (positive = theory beats no
+theory; negative = theory is worse than no theory):
 
 \begin{center}
 \begin{tabular}{lrrrr}
 \toprule
-Theory & $L(H)$ & $L(D \mid H)$ & MDL & Comp.\% \\
+Theory & $L(H)$ & $L(D \mid H)$ & MDL & Bits saved \\
 \midrule
-null (no links)                     &  0.0 & 143.5 & 143.5 &   0.0\% \\
-one link: $p \to r$                 &  8.0 & 134.2 & 142.2 &   0.9\% \\
-one link: $q \to r$                 &  8.0 & 140.0 & 148.0 &  $-3.1$\% \\
-two links: $p \to r$, $q \to r$     & 16.0 & 141.8 & 157.8 & $-10.0$\% \\
-conjunctive: $p \wedge q \to r$     &  8.0 & 117.1 & 125.1 & \textbf{12.8\%} \\
-wrong link: $p \to q$               &  8.0 & 143.2 & 151.2 &  $-5.3$\% \\
+null (no links)                          &  0.0 & 143.5 & 143.5 &       0.0 \\
+one link: $p \to r$                      &  8.0 & 134.2 & 142.2 &    $+1.3$ \\
+one link: $q \to r$                      &  8.0 & 140.0 & 148.0 &    $-4.5$ \\
+two links: $p \to r$, $q \to r$          & 16.0 & 141.8 & 157.8 &   $-14.3$ \\
+conjunctive: $p \wedge q \to r$          &  8.0 & 117.1 & 125.1 & $\mathbf{+18.4}$ \\
+wrong link: $p \to q$                    &  8.0 & 143.2 & 151.2 &    $-7.7$ \\
 \bottomrule
 \end{tabular}
 \end{center}
 
-The conjunctive theory wins decisively at 12.8\% compression, using
-only 8 bits to describe a single link. The disjunctive two-link theory
-loses despite having more information about $r$: it misfires when only
-one of $p$ or $q$ is true, spending bits predicting $r = 1$ when in
-fact $r = 0$. The wrong link ($p \to q$) scores worse than null.
+\textit{Bits saved = MDL(null) $-$ MDL(theory). Positive means the
+theory beats the baseline; negative means it is worse than having no
+theory.}
 
-This result captures a key distinction the framework makes precise:
-having \emph{more} links is not always better. What matters is whether
-the links capture the actual generative structure. The disjunctive
-theory has the right variables but the wrong logical connective; the
-conjunctive theory has the right structure and wins.
+The conjunctive theory wins by 18.4 bits over null, using only 8 bits
+to describe a single link. The disjunctive two-link theory loses by
+14.3 bits despite having access to both premises: it misfires whenever
+only one of $p$ or $q$ is true, spending bits predicting $r = 1$ when
+in fact $r = 0$. The wrong link ($p \to q$) loses by 7.7 bits. Even
+the partial theory ($p \to r$ alone) barely beats null at $+1.3$ bits.
+
+The key result: having \emph{more} links is not always better. The
+two-link disjunctive theory has strictly more information about $r$
+than the one-link conjunctive theory---both premises vs.\ one---yet
+it performs worse. What matters is whether the links capture the actual
+generative structure. The disjunctive theory has the right variables
+but the wrong logical connective.
 
 \subsection{Theories Are Amortized Over Data (\texttt{mdl scale})}
 
-The scale experiment holds the theory fixed ($L(H) = 8$ bits, one
-conjunctive link) and varies the dataset size from 5 to 1000 pairs at
-regularity $= 1.0$:
+The scale experiment holds the theory fixed (one conjunctive link,
+$L(H) = 8$ bits) and varies dataset size from $n = 5$ to $n = 1000$
+at regularity $= 1.0$:
 
 \begin{center}
-\begin{tabular}{rrrrrrr}
+\begin{tabular}{rrrrr}
 \toprule
-$n$ & $L(D)$ & $L(H)$ & $L(D \mid H)$ & MDL & Compression & Comp.\% \\
+$n$ & $L(D)$ & MDL & Bits saved & Comp.\% \\
 \midrule
-5    &   13.3 & 8.0 &   10.7 &   18.7 &   $-5.4$ & $-40.2$\% \\
-10   &   28.8 & 8.0 &   23.6 &   31.6 &   $-2.8$ &  $-9.7$\% \\
-25   &   70.9 & 8.0 &   57.8 &   65.8 &    $5.0$ &   $7.1$\% \\
-50   &  136.7 & 8.0 &  110.1 &  118.1 &   $18.5$ &  $13.6$\% \\
-100  &  276.2 & 8.0 &  223.2 &  231.2 &   $44.9$ &  $16.3$\% \\
-200  &  535.7 & 8.0 &  432.5 &  440.5 &   $95.2$ &  $17.8$\% \\
-500  & 1326.8 & 8.0 & 1071.0 & 1079.0 &  $247.9$ &  $18.7$\% \\
-1000 & 2680.7 & 8.0 & 2162.1 & 2170.1 &  $510.6$ &  $19.0$\% \\
+5    &   13.3 &  18.7 &  $-5.4$ & $-40.2$\% \\
+10   &   28.8 &  31.6 &  $-2.8$ &  $-9.7$\% \\
+25   &   70.9 &  65.8 &  $+5.0$ &  $+7.1$\% \\
+50   &  136.7 & 118.1 & $+18.5$ & $+13.6$\% \\
+100  &  276.2 & 231.2 & $+44.9$ & $+16.3$\% \\
+200  &  535.7 & 440.5 & $+95.2$ & $+17.8$\% \\
+500  & 1326.8 &1079.0 &$+247.9$ & $+18.7$\% \\
+1000 & 2680.7 &2170.1 &$+510.6$ & $+19.0$\% \\
 \bottomrule
 \end{tabular}
 \end{center}
 
-$L(H) = 8$ bits at every scale. $L(D)$ and compression both grow
-linearly. The theory crosses into positive compression between $n = 10$
-and $n = 25$: the 8-bit fixed cost is recovered after roughly 15 pairs.
-At $n = 1000$, the theory saves 510 bits---64 times its own description
-length.
+\textit{Bits saved = $L(D) -$ MDL. Positive means the theory beats
+encoding the data with no theory; negative means the theory overhead
+is not yet recovered.}
+
+$L(H) = 8$ bits at every scale. The theory loses at $n = 5$ and
+$n = 10$---the 8-bit overhead is not yet recovered. It crosses into
+positive territory between $n = 10$ and $n = 25$: the fixed theory
+cost is amortized after roughly 15 pairs. At $n = 1000$, the theory
+saves 510 bits---64 times its own description length.
 
 This is the formal version of the intuition behind scientific laws.
-Newton's laws cost a fixed number of bits to state. The data they
-compress---centuries of astronomical observations---grows without bound.
-Every new observation is compressed for free once the theory exists.
-The amortization of $L(H)$ over $L(D)$ is not a metaphor; it is a
-computable quantity, demonstrated here at the level of individual bits.
+Newton's laws cost a fixed number of bits to state. Every new
+observation they predict is compressed for free once the theory exists.
+The amortization is not a metaphor; it is a computable quantity.
 
 \subsection{MDL Selects Correct Theory Complexity (\texttt{mdl compete})}
 
 The compete experiment runs four theories of increasing complexity on
-the same dating dataset at three regularity levels:
+the same dating dataset at three regularity levels. The theories are:
+T0 (null), T1 (one implication link), T2 (correct conjunctive link),
+and T3 (T2 plus one spurious implication link):
 
 \begin{center}
 \begin{tabular}{lrrrr}
 \toprule
-Theory & $L(H)$ & $L(D \mid H)$ & MDL & Comp.\% \\
+Theory & $L(H)$ & $L(D \mid H)$ & MDL & Bits saved \\
 \midrule
-\multicolumn{5}{l}{\textit{regularity = 1.0 (data follows theory exactly)}} \\
-T0: null                        &  0.0 & 276.2 & 276.2 &   0.0\% \\
-T1: $\text{like\_jj} \to \text{date}$  &  8.0 & 272.6 & 280.6 &  $-1.6$\% \\
-T2: $\text{like\_jj} \wedge \text{like\_ji} \to \text{date}$ (correct) & 8.0 & 223.2 & 231.2 & \textbf{16.3\%} \\
-T3: T2 + spurious link          & 16.0 & 223.2 & 239.2 &  $13.4$\% \\
+\multicolumn{5}{l}{\textit{regularity = 1.0}} \\
+T0: null                 &  0.0 & 276.2 & 276.2 &    $0.0$ \\
+T1: one link             &  8.0 & 272.6 & 280.6 &   $-4.5$ \\
+T2: correct conjunctive  &  8.0 & 223.2 & 231.2 & $\mathbf{+44.9}$ \\
+T3: T2 + spurious link   & 16.0 & 223.2 & 239.2 &  $+36.9$ \\
 \midrule
-\multicolumn{5}{l}{\textit{regularity = 0.5 (half noise)}} \\
-T0: null                        &  0.0 & 272.5 & 272.5 & \textbf{0.0\%} \\
-T1: $\text{like\_jj} \to \text{date}$  &  8.0 & 272.0 & 280.0 &  $-2.8$\% \\
-T2: correct                     &  8.0 & 262.6 & 270.6 &   $0.7$\% \\
-T3: T2 + spurious link          & 16.0 & 262.6 & 278.6 &  $-2.3$\% \\
+\multicolumn{5}{l}{\textit{regularity = 0.5}} \\
+T0: null                 &  0.0 & 272.5 & 272.5 & $\mathbf{0.0}$ \\
+T1: one link             &  8.0 & 272.0 & 280.0 &   $-7.6$ \\
+T2: correct conjunctive  &  8.0 & 262.6 & 270.6 &   $+1.9$ \\
+T3: T2 + spurious link   & 16.0 & 262.6 & 278.6 &   $-6.1$ \\
 \midrule
-\multicolumn{5}{l}{\textit{regularity = 0.0 (pure noise)}} \\
-T0: null                        &  0.0 & 273.5 & 273.5 & \textbf{0.0\%} \\
-T1: $\text{like\_jj} \to \text{date}$  &  8.0 & 273.5 & 281.5 &  $-2.9$\% \\
-T2: correct                     &  8.0 & 273.5 & 281.5 &  $-2.9$\% \\
-T3: T2 + spurious link          & 16.0 & 273.5 & 289.5 &  $-5.9$\% \\
+\multicolumn{5}{l}{\textit{regularity = 0.0}} \\
+T0: null                 &  0.0 & 273.5 & 273.5 & $\mathbf{0.0}$ \\
+T1: one link             &  8.0 & 273.5 & 281.5 &   $-8.0$ \\
+T2: correct conjunctive  &  8.0 & 273.5 & 281.5 &   $-8.0$ \\
+T3: T2 + spurious link   & 16.0 & 273.5 & 289.5 &  $-16.0$ \\
 \bottomrule
 \end{tabular}
 \end{center}
 
+\textit{Bits saved = MDL(T0) $-$ MDL(theory). Positive means the
+theory beats null; negative means it is worse than having no theory.}
+
 Several results are worth highlighting.
 
-At regularity $= 1.0$, T2 wins at 16.3\% compression. T3 (correct
-theory plus one spurious link) loses to T2 by exactly 8 bits---the
-description length of the spurious link. The spurious link buys zero
-reduction in $L(D \mid H)$ and costs exactly its description length.
-This is Occam's razor in its precise form: \emph{complexity is penalized
-whether or not it actively harms prediction.} A theory that is correct
-but unnecessarily complex loses to the minimal correct theory.
+At regularity $= 1.0$, T2 saves 44.9 bits over null. T3 saves 36.9
+bits---exactly 8 bits less than T2. The spurious link costs exactly
+its description length and buys nothing: $L(D \mid H)$ is identical
+for T2 and T3, because the spurious link (an implication from one
+premise that is independent of \texttt{date}) does not change the
+predicted probability of any conclusion. This is Occam's razor in its
+most precise form: \emph{a theory that is correct but unnecessarily
+complex loses to the minimal correct theory by exactly the description
+length of the excess.}
 
-At regularity $= 0.5$, T2 barely wins (0.7\%), while T0, T1, and T3
-all lose. The signal is real but weak; the conjunctive structure is
-marginally justified but not enough to overcome the cost of additional
-links (T3 loses).
+At regularity $= 0.5$, T2 barely saves 1.9 bits. The signal exists
+but is weak; the correct theory is marginally justified, while T3
+cannot recover the extra 8-bit cost of the spurious link.
 
-At regularity $= 0.0$ (pure noise), T0 wins and T1 and T2 tie at
-exactly $-8.0$ bits each---they pay $L(H)$ with zero $L(D \mid H)$
-benefit. T3 scores $-16.0$ bits, paying double. The framework correctly
-selects the null theory when no structure exists.
+At regularity $= 0.0$ (pure noise), T0 wins. T1 and T2 both lose by
+exactly 8.0 bits---they pay $L(H)$ with zero $L(D \mid H)$ benefit.
+T3 loses by 16.0 bits. The framework correctly selects the null theory
+when no structure exists in the data, and penalizes each spurious link
+by exactly its description length.
 
-The compete results demonstrate Kuhn's paradigm shift mechanism in
-miniature. As regularity increases from 0 to 1, the optimal theory
-switches from T0 to T2. The switch is discontinuous---T2 does not
-gradually displace T0; it crosses from losing to winning as data
-regularity crosses a threshold. This is the MDL phase transition
-(Section~\ref{sec:connections}).
+The regularity crossover demonstrates Kuhn's paradigm shift mechanism
+in miniature. As regularity increases from 0 to 1, the optimal theory
+switches discontinuously from T0 to T2. The switch is not gradual: T2
+goes from losing (regularity $= 0$) to barely winning (regularity $=
+0.5$) to winning decisively (regularity $= 1$). This is the MDL phase
+transition (Section~\ref{sec:connections}): the optimal hypothesis
+class jumps when accumulated data crosses the threshold where the
+theory's amortized savings exceed its description length cost.
