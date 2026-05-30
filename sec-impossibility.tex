@@ -1,0 +1,67 @@
+\section{No Universal Computable Coding Scheme}
+\label{sec:impossibility}
+
+Section~\ref{sec:coding} argued that the QBBN is the strongest known candidate coding scheme for the logical fragment of scientific hypotheses, while stating plainly that it does not solve the general coding scheme problem. This section explains why no scheme can: the optimal coding scheme exists but is not computable. The result is not a limitation of the QBBN in particular. It is a theorem about every computable scheme, and it is the formal reason science is permanently open.
+
+\subsection{The Setup}
+
+Recall the structure from Section~\ref{sec:objective}. A coding scheme assigns a description length to each hypothesis, and the MDL objective minimizes $L(H) + L(D \mid H)$ under that scheme. The Kolmogorov complexity $\K$ furnishes the ideal scheme: the Solomonoff prior $P(H) \propto 2^{-\K(H)}$ is \emph{universal}, dominating every computable distribution up to a multiplicative constant (equivalently, $\K$ lower-bounds the description length of every computable scheme up to an additive constant). The catch, established in Section~\ref{sec:kolmogorov}, is that $\K$ is uncomputable.
+
+The natural hope is that some \emph{computable} scheme might recover universality---that we could fix a concrete, implementable code that is never worse than any competitor by more than a constant, and so deploy it as the one coding scheme for all of science. This section shows the hope is unsatisfiable.
+
+\begin{definition}[Computable coding scheme]
+A \emph{computable coding scheme} is a total computable function $L : \mathcal{H} \to \mathbb{N}$ assigning to each hypothesis a description length, satisfying the Kraft inequality $\sum_{H \in \mathcal{H}} 2^{-L(H)} \leq 1$ (so that $L$ is the length function of an actual prefix code).
+\end{definition}
+
+\begin{definition}[Universality]
+A coding scheme $L^{*}$ is \emph{universal} if for every computable coding scheme $L'$ there is a constant $c_{L'}$ such that
+\[
+  L^{*}(H) \leq L'(H) + c_{L'} \quad \text{for all } H \in \mathcal{H}.
+\]
+The constant may depend on $L'$ but not on $H$. This is exactly the domination property the Solomonoff prior enjoys: it is no worse than any competitor, up to a fixed overhead.
+\end{definition}
+
+We rely on one standard result from algorithmic information theory.
+
+\begin{theorem}[No computable approximation of $\K$; Li and Vitányi~\cite{livitanyi2008}]
+\label{thm:no-approx}
+There is no computable function $f$ and constant $c$ such that $|f(x) - \K(x)| \leq c$ for all $x$. Kolmogorov complexity cannot be approximated to within any additive constant by a computable function.
+\end{theorem}
+
+This is the additive-constant strengthening of the uncomputability of $\K$ proved in Section~\ref{sec:kolmogorov}; it follows from the same Berry/Chaitin argument. If $\K$ could be pinned to within $c$ bits, one could mechanically exhibit strings of certifiably high complexity and reconstruct Berry's paradox.
+
+\subsection{The Theorem}
+
+\begin{theorem}[No universal computable coding scheme]
+\label{thm:no-universal}
+No computable coding scheme is universal.
+\end{theorem}
+
+\begin{proof}
+Suppose, for contradiction, that $L^{*}$ is a computable coding scheme that is universal.
+
+Because $L^{*}$ is itself a computable coding scheme, the universality of the Kolmogorov scheme (Section~\ref{sec:objective}) gives a constant $a$ with
+\[
+  \K(H) \leq L^{*}(H) + a \quad \text{for all } H.
+\]
+That is, the ideal scheme dominates $L^{*}$ from below: no computable code beats $\K$ by more than a constant.
+
+Conversely, $L^{*}$ is assumed universal, so it dominates every computable scheme up to a constant. The length function of any fixed prefix code over $\mathcal{H}$ is computable, and $\K$ is the pointwise infimum of these computable length functions; universality of $L^{*}$ therefore yields a constant $b$ with
+\[
+  L^{*}(H) \leq \K(H) + b \quad \text{for all } H.
+\]
+
+Combining the two inequalities,
+\[
+  |L^{*}(H) - \K(H)| \leq \max(a, b) \quad \text{for all } H.
+\]
+But $L^{*}$ is computable. We have produced a computable function within an additive constant of $\K$, contradicting Theorem~\ref{thm:no-approx}. Hence no computable coding scheme is universal.
+\end{proof}
+
+\subsection{Why the Impossibility Is Generative}
+
+Theorem~\ref{thm:no-universal} closes off a particular ambition: there is no master code one could fix in advance that is guaranteed never to be beaten. Two universal coding schemes that we know to exist---the Solomonoff measure and $\K$ itself---are precisely the ones that cannot be run. Universality and computability are mutually exclusive.
+
+This is the same impossibility as Hume's problem of induction, in engineering form (Section~\ref{sec:connections}). It is not a defect to be patched but the structural fact that makes the activity of science unending. If a universal computable coding scheme existed, theory selection would collapse into a finite computation: feed in the data, read off the optimal hypothesis. There would be no further discoveries to make, only a calculation to run. The theorem says no such calculation exists. Every coding scheme is improvable; every theory is a finite upper bound on an uncomputable optimum; the search for shorter descriptions has no terminus.
+
+This also fixes the precise sense in which the QBBN claim of Section~\ref{sec:coding} should be read. The QBBN is not, and provably could not be, the universally optimal coding scheme---nothing computable is. What it can be, and what we argue it is, is the strongest known computable scheme for a large and well-delineated domain: the logical/propositional fragment of scientific hypotheses. Local optimality within a fixed hypothesis class, under stated desiderata, remains entirely available. It is only the global, computable, once-and-for-all code that the theorem forbids. The honest target for any coding scheme is to be the best available approximation over the domain it covers---and to be replaced, eventually, by a better one. That replacement is what scientific progress is.

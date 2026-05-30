@@ -24,37 +24,7 @@ Theory, Coding Scheme, and Empirical Demonstrations}
 \maketitle
 
 \begin{abstract}
-We propose Minimum Description Length (MDL)---minimize $L(H) +
-L(D \mid H)$, where $L(H)$ is the description length of a hypothesis
-and $L(D \mid H)$ is the negative log-likelihood of the data given the
-hypothesis---as a formal objective function for scientific theory
-selection. MDL is the computable approximation to Solomonoff
-induction, which is Bayesian inference with the Kolmogorov/Solomonoff
-prior. We make four contributions. First, we argue that the history of
-philosophy of science from Hume through Popper, Kuhn, Lakatos, and
-the Bayesian tradition is best understood as a sequence of partial
-approximations to this objective, and identify ten cases where
-independent traditions converged on the same structure in different
-language. Second, we identify a concrete coding scheme problem: MDL
-requires a way of assigning description lengths to hypotheses, and we
-argue that the Quantified Boolean Bayesian Network
-(QBBN)~\cite{coppola2024qbbn} is the strongest known candidate for
-the logical/propositional fragment---it is complete over first-order
-logic, generative, tractable via belief propagation, and structurally
-aligned with transformer architectures, which
-Coppola~\cite{coppola2026} proves implement exact belief propagation
-on QBBN-structured factor graphs. Third, we demonstrate the framework
-empirically in two domains: programs and code, where a new result
-shows current AutoResearch systems are one $L(H)$ term short of the
-full MDL objective, accounting for a 65.2\% improvement on benchmark
-problems; and logical proposition datasets, where QBBN-coded MDL
-selects correct conjunctive structure over disjunctive (18.4 bits
-saved), amortizes 8 bits of theory over 510 bits of savings at scale,
-and exhibits a discrete regularity crossover that instantiates Kuhn's
-paradigm shift mechanism at the bit level. Fourth, we argue that a
-system implementing the MDL objective is doing science in a formal
-sense regardless of substrate: a theorem-proving system with the right
-objective function is not merely adjacent to AGI---it is AGI.
+We propose Minimum Description Length (MDL)---minimize $L(H) + L(D \mid H)$, where $L(H)$ is the description length of a hypothesis and $L(D \mid H)$ is the negative log-likelihood of the data given the hypothesis---as a formal objective function for scientific theory selection. MDL is the computable approximation to Solomonoff induction, which is Bayesian inference with the Kolmogorov/Solomonoff prior. We make four contributions. First, we argue that the history of philosophy of science from Hume through Popper, Kuhn, Lakatos, and the Bayesian tradition is best understood as a sequence of partial approximations to this objective, and identify ten cases where independent traditions converged on the same structure in different language. Second, we identify a concrete coding scheme problem: MDL requires a way of assigning description lengths to hypotheses, and we argue that the Quantified Boolean Bayesian Network (QBBN)~\cite{coppola2024qbbn} is the strongest known candidate for the logical/propositional fragment---it is complete over first-order logic, generative, tractable via belief propagation, and structurally aligned with transformer architectures, which Coppola~\cite{coppola2026} proves implement exact belief propagation on QBBN-structured factor graphs. We prove, however, that no computable coding scheme can be universally optimal: the optimal scheme exists but is uncomputable, which is the formal reason scientific inquiry is permanently open. Third, we demonstrate the framework empirically in two domains: programs and code, where a new result shows current AutoResearch systems are one $L(H)$ term short of the full MDL objective, accounting for a 65.2\% improvement on benchmark problems; and logical proposition datasets, where QBBN-coded MDL selects correct conjunctive structure over disjunctive (18.4 bits saved), amortizes 8 bits of theory over 510 bits of savings at scale, and exhibits a discrete regularity crossover that instantiates Kuhn's paradigm shift mechanism at the bit level. Fourth, we argue that a system implementing the MDL objective is doing science in a formal sense regardless of substrate: a theorem-proving system with the right objective function is not merely adjacent to AGI---it is AGI.
 \end{abstract}
 
 \tableofcontents
@@ -64,6 +34,7 @@ objective function is not merely adjacent to AGI---it is AGI.
 \input{sec-objective}
 \input{sec-kolmogorov}
 \input{sec-coding-scheme}
+\input{sec-impossibility}
 \input{sec-history}
 \input{sec-connections}
 \input{sec-experiments-code}
