@@ -34,23 +34,23 @@ We make four contributions. First, we trace the history of philosophy
 of science as a single argument converging on this framework, and
 identify ten cases where independent traditions discovered the same
 structure in different language. Second, we argue that the Quantified
-Boolean Bayesian Network (QBBN) is the best known candidate for a
-universal practical coding scheme for the MDL objective: it is
-complete over first-order logic, generative, tractable via belief
-propagation, and---by the \texttt{shannon} result---the coding scheme
-that transformers implicitly implement. Third, we demonstrate the
-framework empirically in two domains: programs and code
-(\texttt{auto-research}), where a new result shows current AutoResearch
+Boolean Bayesian Network (QBBN)~\cite{coppola2024qbbn} is the
+strongest known candidate coding scheme for the logical/propositional
+fragment of scientific hypotheses: it is complete over first-order
+logic, generative, tractable via belief propagation, and structurally
+aligned with transformer architectures, which Coppola~\cite{coppola2026}
+proves implement exact belief propagation on QBBN-structured factor
+graphs. Third, we demonstrate the framework empirically in two domains:
+programs and code, where a new result shows current AutoResearch
 systems are one $L(H)$ term short of the full objective, accounting
-for a 65.2\% improvement on benchmark problems; and logical
-proposition datasets (\texttt{mdl-science}), where QBBN-coded MDL
-selects correct conjunctive structure, amortizes 8 bits of theory over
-510 bits of savings at scale, and exhibits the discrete regularity
-crossover that instantiates Kuhn's paradigm shift at the bit level.
-Fourth, we argue that a system with the right objective function is
-doing science regardless of substrate: automated theorem proving with
-MDL is not adjacent to AGI---it is AGI. The objective function is MDL.
-We already know what it is.
+for a 65.2\% improvement on benchmark problems; and logical proposition
+datasets, where QBBN-coded MDL selects correct conjunctive structure,
+amortizes 8 bits of theory over 510 bits of savings at scale, and
+exhibits the discrete regularity crossover that instantiates Kuhn's
+paradigm shift at the bit level. Fourth, we argue that a system with
+the right objective function is doing science regardless of substrate:
+automated theorem proving with MDL is not adjacent to AGI---it is AGI.
+The objective function is MDL. We already know what it is.
 \end{abstract}
 
 \tableofcontents
