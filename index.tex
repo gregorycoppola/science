@@ -3,6 +3,7 @@
 \usepackage{geometry}
 \usepackage{hyperref}
 \usepackage{microtype}
+\usepackage{booktabs}
 \geometry{margin=1.2in}
 
 \newtheorem{theorem}{Theorem}[section]
@@ -34,15 +35,18 @@ trace the history of philosophy of science as a sequence of partial
 approximations to it, and identify ten cases where ideas from distinct
 traditions---philosophy, computability theory, information theory,
 neuroscience, machine learning---turn out to be the same idea expressed in
-different language. We then draw a conclusion that the framework makes
-unavoidable: a system that searches a hypothesis space and verifies
-proposals against any computable oracle---including a formal proof
-checker---is doing science in the full formal sense. The widespread claim
-that automated theorem proving is ``not AGI because it is not science''
-rests on an implicit theory of science that cannot survive scrutiny. Under
-the correct theory, a theorem-proving system with the right objective
-function is not merely adjacent to AGI. It is AGI. The objective function
-is MDL. We already know what it is.
+different language. We demonstrate five aspects of the framework empirically
+with reproducible code and exact numbers, including a new result: current
+AutoResearch systems are one term short of the full MDL objective, and the
+missing term accounts for a 65.2\% improvement on benchmark problems. We
+then draw a conclusion the framework makes unavoidable: a system that
+searches a hypothesis space and verifies proposals against any computable
+oracle---including a formal proof checker---is doing science in the full
+formal sense. The widespread claim that automated theorem proving is ``not
+AGI because it is not science'' rests on an implicit theory of science that
+cannot survive scrutiny. Under the correct theory, a theorem-proving system
+with the right objective function is not merely adjacent to AGI. It is AGI.
+The objective function is MDL. We already know what it is.
 \end{abstract}
 
 \tableofcontents
@@ -52,6 +56,7 @@ is MDL. We already know what it is.
 \input{sec-kolmogorov}
 \input{sec-history}
 \input{sec-connections}
+\input{sec-experiments}
 \input{sec-verification}
 \input{sec-agi}
 
