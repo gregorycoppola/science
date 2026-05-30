@@ -1,0 +1,169 @@
+\section{Experiments II: Logical Propositions}
+\label{sec:experiments-logic}
+
+The experiments in this section instantiate the MDL objective function
+in the domain of logical proposition datasets, using the QBBN coding
+scheme developed in Section~\ref{sec:coding}. All results are
+reproducible from the \texttt{mdl-science} repository.
+
+A dataset is a list of boolean proposition observations. A theory is a
+set of \emph{implication links} (premise $\to$ conclusion, firing when
+the premise is true) and \emph{conjunctive links}
+($[\text{premise}_1, \ldots, \text{premise}_n] \to$ conclusion, firing
+only when all premises are true). These correspond directly to the QBBN:
+conjunctive links are AND gates, implication links are OR-gate inputs.
+
+The two-part code is concrete. $L(H)$ counts the number of links times
+the bits per weight---a fixed cost per link, independent of dataset
+size. $L(D \mid H)$ is the total negative log-likelihood of the observed
+propositions under the theory's conditional probabilities, with link
+weights calibrated empirically from the data. Propositions not covered
+by any link fall back to their empirical base rate, ensuring the theory
+can only help---never hurt---on uncovered propositions.
+
+\subsection{Conjunctive Structure Wins (\texttt{mdl compress})}
+
+Data where $r = p \wedge q$ exactly ($n = 50$ triples). Six theories
+compete. Results are reported as MDL score and bits saved versus null
+(positive = beats no theory; negative = worse than no theory):
+
+\begin{center}
+\begin{tabular}{lrrrr}
+\toprule
+Theory & $L(H)$ & $L(D \mid H)$ & MDL & Bits saved \\
+\midrule
+null (no links)                 &  0.0 & 143.5 & 143.5 &      $0.0$ \\
+one link: $p \to r$             &  8.0 & 134.2 & 142.2 &    $+1.3$ \\
+one link: $q \to r$             &  8.0 & 140.0 & 148.0 &    $-4.5$ \\
+two links: $p \to r$, $q \to r$ & 16.0 & 141.8 & 157.8 &   $-14.3$ \\
+conjunctive: $p \wedge q \to r$ &  8.0 & 117.1 & 125.1 & $+\mathbf{18.4}$ \\
+wrong link: $p \to q$           &  8.0 & 143.2 & 151.2 &    $-7.7$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\textit{Bits saved = MDL(null) $-$ MDL(theory).}
+
+The conjunctive theory wins by 18.4 bits using only 8 bits to describe
+one link. The disjunctive two-link theory loses by 14.3 bits despite
+having both premises available: it misfires when only one of $p$ or $q$
+is true, predicting $r = 1$ when $r = 0$. The wrong link loses by 7.7
+bits. Even the partial theory $p \to r$ barely wins at $+1.3$ bits.
+
+The key result: having more links is not always better. The two-link
+disjunctive theory has strictly more information about $r$ than the
+one-link conjunctive theory, yet it performs worse. What matters is
+whether the links capture the true generative structure. The disjunctive
+theory has the right variables but the wrong logical connective.
+
+This result is a direct consequence of the QBBN coding scheme. The AND
+gate (conjunctive link) is a zero-parameter, deterministic structure
+that adds only its own description to $L(H)$. The OR-gate inputs
+(implication links) each add weight parameters. When the true structure
+is conjunctive, the conjunctive coding is maximally efficient: it pays
+zero for the AND computation itself, only for the single weight that
+says how strongly the conjunction predicts the conclusion.
+
+\subsection{Theories Are Amortized Over Data (\texttt{mdl scale})}
+
+One conjunctive link, $L(H) = 8$ bits, regularity $= 1.0$, $n$ from
+5 to 1000:
+
+\begin{center}
+\begin{tabular}{rrrrr}
+\toprule
+$n$ & $L(D)$ & MDL & Bits saved & Comp.\% \\
+\midrule
+5    &   13.3 &   18.7 &   $-5.4$ & $-40.2$\% \\
+10   &   28.8 &   31.6 &   $-2.8$ &  $-9.7$\% \\
+25   &   70.9 &   65.8 &   $+5.0$ &  $+7.1$\% \\
+50   &  136.7 &  118.1 &  $+18.5$ & $+13.6$\% \\
+100  &  276.2 &  231.2 &  $+44.9$ & $+16.3$\% \\
+200  &  535.7 &  440.5 &  $+95.2$ & $+17.8$\% \\
+500  & 1326.8 & 1079.0 & $+247.9$ & $+18.7$\% \\
+1000 & 2680.7 & 2170.1 & $+510.6$ & $+19.0$\% \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\textit{Bits saved = $L(D) -$ MDL. Positive means the theory beats the
+no-theory baseline.}
+
+$L(H) = 8$ bits at every scale. The theory loses at $n = 5$ and
+$n = 10$, crosses into positive territory between $n = 10$ and $n = 25$,
+and saves 510 bits at $n = 1000$---64 times its own description length.
+
+This is the formal version of the intuition behind scientific laws.
+Newton's laws cost a fixed number of bits to state; every new
+observation is compressed for free once the theory exists. The
+amortization is not a metaphor. It is a computable quantity,
+demonstrated here at the level of individual bits, with the crossover
+point (theory overhead recovered at $\approx n = 15$ pairs) precisely
+measurable.
+
+The QBBN coding scheme makes this particularly clean. Because $L(H)$
+counts only the structural description of the links (which propositions,
+which logical connective, what weight precision), it is genuinely
+independent of dataset size. The same 8 bits describes the theory
+whether the dataset has 5 observations or 5 million. This is the coding
+scheme doing its job: separating the cost of the theory from the cost
+of the data.
+
+\subsection{MDL Selects Correct Theory Complexity (\texttt{mdl compete})}
+
+Four theories at three regularity levels. T0 = null, T1 = one
+implication link, T2 = correct conjunctive link, T3 = T2 plus one
+spurious implication link:
+
+\begin{center}
+\begin{tabular}{lrrrr}
+\toprule
+Theory & $L(H)$ & $L(D \mid H)$ & MDL & Bits saved \\
+\midrule
+\multicolumn{5}{l}{\textit{regularity = 1.0}} \\
+T0: null                &  0.0 & 276.2 & 276.2 &       $0.0$ \\
+T1: one link            &  8.0 & 272.6 & 280.6 &      $-4.5$ \\
+T2: correct conjunctive &  8.0 & 223.2 & 231.2 & $+\mathbf{44.9}$ \\
+T3: T2 + spurious link  & 16.0 & 223.2 & 239.2 &     $+36.9$ \\
+\midrule
+\multicolumn{5}{l}{\textit{regularity = 0.5}} \\
+T0: null                &  0.0 & 272.5 & 272.5 & $\mathbf{0.0}$ \\
+T1: one link            &  8.0 & 272.0 & 280.0 &      $-7.6$ \\
+T2: correct conjunctive &  8.0 & 262.6 & 270.6 &      $+1.9$ \\
+T3: T2 + spurious link  & 16.0 & 262.6 & 278.6 &      $-6.1$ \\
+\midrule
+\multicolumn{5}{l}{\textit{regularity = 0.0}} \\
+T0: null                &  0.0 & 273.5 & 273.5 & $\mathbf{0.0}$ \\
+T1: one link            &  8.0 & 273.5 & 281.5 &      $-8.0$ \\
+T2: correct conjunctive &  8.0 & 273.5 & 281.5 &      $-8.0$ \\
+T3: T2 + spurious link  & 16.0 & 273.5 & 289.5 &     $-16.0$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\textit{Bits saved = MDL(T0) $-$ MDL(theory).}
+
+At regularity $= 1.0$, T2 saves 44.9 bits. T3 saves 36.9 bits---
+exactly 8 bits less than T2. The spurious link costs exactly its
+description length and changes $L(D \mid H)$ not at all. This is
+Occam's razor in its precise form: \emph{a theory that is correct but
+unnecessarily complex loses to the minimal correct theory by exactly
+the description length of the excess.}
+
+At regularity $= 0.5$, T2 barely saves 1.9 bits. The signal is real
+but weak; T3 cannot recover the extra 8-bit cost. At regularity $=
+0.0$, T0 wins; T1 and T2 tie at exactly $-8.0$ bits; T3 pays $-16.0$
+bits. The framework penalizes each spurious link by exactly its
+description length.
+
+The regularity crossover is the MDL phase transition of
+Section~\ref{sec:connections} instantiated at the bit level. As
+regularity increases from 0 to 1, the optimal theory switches
+discontinuously from T0 to T2. The switch is not gradual: T2 goes
+from $-8.0$ bits (noise) to $+1.9$ bits (weak signal) to $+44.9$ bits
+(perfect regularity). The optimal hypothesis class jumps when the
+theory's amortized savings first exceed its description length cost.
+This is exactly what Kuhn observed in the history of science and what
+Lakatos formalized as the distinction between progressive and
+degenerating research programmes. Here it is a measurable threshold
+in bits.
