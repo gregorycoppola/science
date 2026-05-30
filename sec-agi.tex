@@ -3,47 +3,50 @@
 
 \subsection{The Critics' Claim}
 
-A recurring objection in discussions of artificial general intelligence runs
-as follows. Automated theorem proving---even at superhuman scale, even
-across all of mathematics---is not AGI, because formal reasoning is not the
-same as doing science. Science requires engaging with the empirical world:
-forming hypotheses, running experiments, updating on data. A system that
-only manipulates symbols inside a formal system is doing something
-categorically different from what scientists do. Theorem proving, however
-impressive, is a party trick. It is not intelligence.
+A recurring objection in discussions of artificial general intelligence
+runs as follows. Automated theorem proving---even at superhuman scale,
+even across all of mathematics---is not AGI, because formal reasoning
+is not the same as doing science. Science requires engaging with the
+empirical world: forming hypotheses, running experiments, updating on
+data. A system that only manipulates symbols inside a formal system is
+doing something categorically different from what scientists do.
+Theorem proving, however impressive, is a party trick. It is not
+intelligence.
 
-This objection is widespread and sounds compelling. We argue it is wrong,
-and that it is wrong for a precise reason: it rests on an implicit theory of
-science that has never been written down---and when you write it down, it
-does not survive scrutiny.
+This objection is widespread and sounds compelling. We argue it is
+wrong, and that it is wrong for a precise reason: it rests on an
+implicit theory of science that has never been written down---and when
+you write it down, it does not survive scrutiny.
 
 \subsection{The Implicit Theory Being Assumed}
 
-The critics' argument requires a theory of what science is, specifically one
-that excludes formal reasoning. The theory being assumed, roughly, is this:
-science is the activity of interacting with the physical world through
-observation and experiment, and formal reasoning is merely a tool that
-science uses, not science itself.
+The critics' argument requires a theory of what science is,
+specifically one that excludes formal reasoning. The theory being
+assumed, roughly, is this: science is the activity of interacting with
+the physical world through observation and experiment, and formal
+reasoning is merely a tool that science uses, not science itself.
 
-This theory has intuitive appeal but no formal content. It cannot tell you:
+This theory has intuitive appeal but no formal content. It cannot
+tell you:
 \begin{itemize}
-  \item When two competing theories are equally consistent with the data,
-        which is better?
+  \item When two competing theories are equally consistent with the
+        data, which is better?
   \item How much complexity is a theory allowed before it is no longer
         parsimonious?
   \item When should a paradigm be abandoned in favor of a competitor?
-  \item What counts as a legitimate auxiliary hypothesis versus an ad hoc
-        patch?
+  \item What counts as a legitimate auxiliary hypothesis versus an ad
+        hoc patch?
 \end{itemize}
 These are the central questions of the philosophy of science, and the
-informal ``interaction with the physical world'' theory has no answers to
-them. It is not a theory of science. It is a description of one setting in
-which science sometimes happens.
+informal ``interaction with the physical world'' theory has no answers
+to them. It is not a theory of science. It is a description of one
+setting in which science sometimes happens.
 
 \subsection{The Formal Theory}
 
 The Bayesian/Kolmogorov framework provides an actual theory of science,
-with formal answers to all of the above questions. Restating it precisely:
+with formal answers to all of the above questions. Restating it
+precisely:
 
 \begin{definition}[Scientific activity]
   A process is engaged in scientific activity if it:
@@ -60,75 +63,90 @@ with formal answers to all of the above questions. Restating it precisely:
 \end{definition}
 
 Notice what is \emph{not} in this definition: laboratories, physical
-instruments, empirical data in any particular form, or indeed any
-requirement that $D$ come from the external world rather than from a
-formal system. The definition is about the \emph{structure} of the
-inference, not the \emph{substrate} in which it occurs.
+instruments, empirical data in any particular form, or any requirement
+that $D$ come from the external world rather than from a formal system.
+The definition is about the \emph{structure} of the inference, not the
+\emph{substrate} in which it occurs.
 
 \subsection{The Verification Oracle Is Interchangeable}
 
 The key insight is that the search/verify asymmetry
-(Section~\ref{sec:verification}) holds regardless of what the verifier is.
+(Section~\ref{sec:verification}) holds regardless of what the verifier
+is.
 
-In empirical science, the verifier is experiment: you propose a hypothesis,
-derive a prediction, run the experiment, and check whether the prediction
-holds. Finding a good hypothesis is hard; running the experiment is cheap
-relative to the search.
+In empirical science, the verifier is experiment: propose a hypothesis,
+derive a prediction, run the experiment, check whether the prediction
+holds. Finding a good hypothesis is hard; running the experiment is
+cheap relative to the search.
 
-In formal mathematics, the verifier is the proof checker: you propose a
+In formal mathematics, the verifier is the proof checker: propose a
 theorem and a proof, and the type-checker verifies it in time linear in
-proof length. Finding a good proof is hard (it may require deep insight or
-exhaustive search); checking it is cheap.
+proof length. Finding a good proof is hard; checking it is cheap.
 
-Both are instances of the same abstract structure:
+In logical proposition learning---the domain of the
+\texttt{mdl-science} experiments (Section~\ref{sec:experiments})---the
+verifier is calibration: does the proposed theory actually compress the
+observed propositions? The \texttt{compete} experiment demonstrates
+this directly. At regularity~$= 0.0$, no theory compresses the
+data---the null theory wins and every link costs exactly $L(H)$ with
+zero benefit. At regularity~$= 1.0$, the correct conjunctive theory
+(T2) wins at 16.3\% compression. The verification step is the MDL
+score calculation: cheap, deterministic, and oracle-agnostic.
+
+All three are instances of the same abstract structure:
 \[
   \text{Search}(H \in \mathcal{H}) \xrightarrow{\text{expensive}}
   \hat{H} \xrightarrow{\text{cheap verification}} \text{accept or reject}
 \]
-The oracle that implements ``cheap verification'' differs in its physical
-instantiation---a particle accelerator versus a type-checker---but the
-computational structure is identical. A system that can search hypothesis
-space and verify proposals is doing science. The nature of the oracle is
-irrelevant to this classification.
+The oracle that implements ``cheap verification'' differs in its
+physical instantiation---a particle accelerator, a type-checker, a
+likelihood computation---but the computational structure is identical.
+A system that can search hypothesis space and verify proposals is doing
+science. The nature of the oracle is irrelevant to this classification.
 
 \subsection{What Formal Mathematics Looks Like Under This Theory}
 
-Under the Kolmogorov framework, a mathematical theorem is a hypothesis about
-the structure of a formal system. A proof is the verification. The
-``observations'' $D$ are the axioms and previously established theorems. The
-``experiment'' is type-checking.
+Under the Kolmogorov framework, a mathematical theorem is a hypothesis
+about the structure of a formal system. A proof is the verification.
+The ``observations'' $D$ are the axioms and previously established
+theorems. The ``experiment'' is type-checking.
 
 This is not a strained analogy. Consider what a mathematician does:
 \begin{itemize}
   \item She maintains a space of possible theorems (hypotheses).
-  \item She assigns higher prior probability to theorems that are short,
-        elegant, and follow from a few strong principles---precisely
-        $P(H) \propto 2^{-\K(H)}$.
+  \item She assigns higher prior probability to theorems that are
+        short, elegant, and follow from a few strong
+        principles---precisely $P(H) \propto 2^{-\K(H)}$.
   \item She evaluates a candidate theorem against the existing body of
         mathematics (the ``data'').
   \item She updates: a theorem that follows from deep principles and
         connects many areas is more valuable than one that requires a
         long, ad hoc proof.
-  \item She publishes results that compress the existing body of knowledge
-        into shorter descriptions---unifying previously separate results,
-        revealing that two seemingly different theorems are instances of
-        one.
+  \item She publishes results that compress the existing body of
+        knowledge---unifying previously separate results, revealing
+        that two seemingly different theorems are instances of one.
 \end{itemize}
-This is the MDL objective, applied to a formal domain. The mathematician
-is doing exactly what the physicist does. The substrate differs; the
-objective function is the same.
+This is the MDL objective applied to a formal domain. The
+\texttt{scale} experiment (Section~\ref{sec:experiments}) demonstrates
+the amortization argument concretely: a theory costing 8 bits to state
+saves 510 bits at $n = 1000$ observations. Mathematical theorems are
+the extreme case of this amortization---a single theorem can compress
+an infinite class of observations into a proof of bounded length. The
+mathematician is doing exactly what the physicist does. The substrate
+differs; the objective function is the same.
 
 \subsection{The Objection Answered}
 
-The critics are right that theorem proving, as typically practiced, is not
-the same as doing science. But this is because automated theorem provers as
-currently deployed do not have the right objective function. They are
-optimized to prove specified theorems, not to search for theorems worth
-proving. They are given $H$ and asked to verify it, rather than searching
-$\mathcal{H}$ for the $H$ that minimizes description length.
+The critics are right that theorem proving, as typically practiced, is
+not the same as doing science. But this is because automated theorem
+provers as currently deployed do not have the right objective function.
+They are optimized to prove specified theorems, not to search for
+theorems worth proving. They are given $H$ and asked to verify it,
+rather than searching $\mathcal{H}$ for the $H$ that minimizes
+description length.
 
-This is an engineering gap, not a conceptual impossibility. A theorem-proving
-system equipped with:
+This is an engineering gap, not a conceptual impossibility. A
+theorem-proving system equipped with:
 \begin{enumerate}
   \item A prior over theorems weighted by description length,
   \item A likelihood that measures how much a theorem compresses and
@@ -136,69 +154,90 @@ system equipped with:
   \item A search procedure over the space of provable statements, and
   \item A cheap verifier (the type-checker),
 \end{enumerate}
-would be doing science in the full formal sense. It would propose conjectures
-that compress the mathematical corpus, verify them, keep the ones that
-advance the MDL objective, and discard the rest. This is Solomonoff
-induction instantiated in a formal domain.
+would be doing science in the full formal sense. It would propose
+conjectures that compress the mathematical corpus, verify them, keep
+the ones that advance the MDL objective, and discard the rest. This is
+Solomonoff induction instantiated in a formal domain.
 
-Such a system would not be doing something categorically different from what
-Einstein did when he proposed general relativity, or what Ramanujan did when
-he produced his notebooks. It would be doing the same thing, faster and
-without biological constraints.
+The \texttt{compete} experiment shows what this looks like at
+miniature scale: T3 (correct theory plus spurious link) loses to T2
+(minimal correct theory) by exactly 8 bits at every regularity level.
+A theorem-proving system with the MDL objective would prefer the
+shorter proof of the same theorem. It would prefer the theorem that
+unifies two results over the theorem that merely restates one. It would
+discard conjectures that cost more to state than they save in
+compression of the mathematical corpus. This is not a description of
+an exotic future system---it is a description of what good
+mathematicians do.
+
+Such a system would not be doing something categorically different from
+what Einstein did when he proposed general relativity, or what Ramanujan
+did when he produced his notebooks. It would be doing the same thing,
+faster and without biological constraints.
 
 \subsection{AGI and the Objective Function}
 
-The question of whether a system constitutes artificial general intelligence
-is often posed in terms of capabilities: can it reason, plan, learn, adapt?
-We propose a different framing, grounded in the framework of this paper.
+The question of whether a system constitutes artificial general
+intelligence is often posed in terms of capabilities: can it reason,
+plan, learn, adapt? We propose a different framing, grounded in the
+framework of this paper.
 
 \begin{proposition}[AGI as correct objective function]
   A system exhibits artificial general intelligence if and only if it
-  implements---exactly or approximately---Solomonoff induction: maintaining
-  a prior over computable hypotheses weighted by description length and
-  updating by Bayes' rule on available observations.
+  implements---exactly or approximately---Solomonoff induction:
+  maintaining a prior over computable hypotheses weighted by description
+  length and updating by Bayes' rule on available observations.
 \end{proposition}
 
 This definition has several virtues. It is formal and precise. It is
 substrate-independent: the system can operate on physical observations,
-mathematical structures, or any other computable domain. It is graded:
-systems can approximate Solomonoff induction more or less closely, with
-better approximations constituting more general intelligence. And it
-connects AGI directly to the objective function for science: a system that
-is doing science in the formal sense is, by this definition, exhibiting
-general intelligence.
+mathematical structures, logical proposition datasets, or any other
+computable domain. It is graded: systems can approximate Solomonoff
+induction more or less closely, with better approximations constituting
+more general intelligence. And it connects AGI directly to the
+objective function for science: a system that is doing science in the
+formal sense is, by this definition, exhibiting general intelligence.
 
 Under this definition, the question ``is theorem proving AGI?'' has a
-precise answer: it depends on whether the theorem-proving system has the
-right objective function. A system that is given theorems to prove and
-proves them is not AGI---it is a very capable special-purpose tool. A
-system that searches for theorems worth proving, verifies them, and updates
-its prior based on what it finds---minimizing description length over the
-space of mathematical knowledge---is AGI, regardless of whether it ever
-runs a physical experiment.
+precise answer: it depends on whether the theorem-proving system has
+the right objective function. A system that is given theorems to prove
+and proves them is not AGI---it is a very capable special-purpose tool.
+A system that searches for theorems worth proving, verifies them, and
+updates its prior based on what it finds---minimizing description length
+over the space of mathematical knowledge---is AGI, regardless of
+whether it ever runs a physical experiment.
+
+The \texttt{mdl-science} experiments make this concrete. Replace
+``mathematical corpus'' with ``proposition dataset,'' replace
+``proof checker'' with ``MDL score calculation,'' and the compete
+experiment is a running miniature of this system: four theories compete,
+the MDL objective selects the correct one, and the selection depends
+entirely on the data's regularity---not on the substrate, not on the
+source of the theories, not on any external judgment.
 
 \subsection{The Broader Implication}
 
-The critics who dismiss theorem proving as ``not really AGI'' are, without
-knowing it, making an implicit claim about the objective function for
-science. They are claiming that the objective function requires physical
-observation as input. We have argued that this claim is false: the objective
-function is MDL, the input can be any observations from any verifiable
-domain, and the structure of inference is the same regardless.
+The critics who dismiss theorem proving as ``not really AGI'' are,
+without knowing it, making an implicit claim about the objective
+function for science. They are claiming that the objective function
+requires physical observation as input. We have argued that this claim
+is false: the objective function is MDL, the input can be any
+observations from any verifiable domain, and the structure of inference
+is the same regardless.
 
-The tools to build such a system exist. The objective function is written
-down---in this paper and in the century of work it synthesizes. The
-verification infrastructure exists: Lean~4 type-checks proofs in linear
-time; benchmark evaluation checks model performance in seconds; experimental
-platforms check empirical predictions in hours or days. The search
-infrastructure is being built: AutoResearch~\cite{karpathy2026},
-agent-based research systems, and large language models used as hypothesis
-generators are all approximating the search step.
+The tools to build such a system exist. The objective function is
+written down---in this paper and in the century of work it synthesizes.
+The verification infrastructure exists: Lean~4 type-checks proofs in
+linear time; benchmark evaluation checks model performance in seconds;
+experimental platforms check empirical predictions in hours or days.
+The search infrastructure is being built: AutoResearch~\cite{karpathy2026},
+agent-based research systems, and large language models used as
+hypothesis generators are all approximating the search step.
 
-What has been missing is the theoretical unification: the recognition that
-all of these are the same process, that they all approximate the same
-objective function, and that a system implementing that objective function
-in any verifiable domain is doing science and exhibiting general
-intelligence.
+What has been missing is the theoretical unification: the recognition
+that all of these are the same process, that they all approximate the
+same objective function, and that a system implementing that objective
+function in any verifiable domain is doing science and exhibiting
+general intelligence.
 
 That recognition is the contribution of this paper.
