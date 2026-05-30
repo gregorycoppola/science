@@ -23,40 +23,47 @@
 \maketitle
 
 \begin{abstract}
-Science has always had an objective function. Written down, it is: minimize
-$L(H) + L(D \mid H)$, where $H$ is a hypothesis, $D$ is observed data,
-$L(H)$ is the description length of the hypothesis (approximating its
-Kolmogorov complexity), and $L(D \mid H)$ is the description length of the
-data given the hypothesis (the negative log-likelihood). This is the Minimum
-Description Length (MDL) principle---the computable approximation to
-Solomonoff induction, which is Bayesian inference with the
-Kolmogorov/Solomonoff prior. We develop this framework from first principles,
-trace the history of philosophy of science as a sequence of partial
-approximations to it, and identify ten cases where ideas from distinct
-traditions---philosophy, computability theory, information theory,
-neuroscience, machine learning---turn out to be the same idea expressed in
-different language. We demonstrate five aspects of the framework empirically
-with reproducible code and exact numbers, including a new result: current
-AutoResearch systems are one term short of the full MDL objective, and the
-missing term accounts for a 65.2\% improvement on benchmark problems. We
-then draw a conclusion the framework makes unavoidable: a system that
-searches a hypothesis space and verifies proposals against any computable
-oracle---including a formal proof checker---is doing science in the full
-formal sense. The widespread claim that automated theorem proving is ``not
-AGI because it is not science'' rests on an implicit theory of science that
-cannot survive scrutiny. Under the correct theory, a theorem-proving system
-with the right objective function is not merely adjacent to AGI. It is AGI.
-The objective function is MDL. We already know what it is.
+Science has always had an objective function. Written down, it is:
+minimize $L(H) + L(D \mid H)$, where $H$ is a hypothesis, $D$ is
+observed data, $L(H)$ is the description length of the hypothesis
+(approximating its Kolmogorov complexity), and $L(D \mid H)$ is the
+description length of the data given the hypothesis (the negative
+log-likelihood). This is the Minimum Description Length (MDL)
+principle---the computable approximation to Solomonoff induction.
+We make four contributions. First, we trace the history of philosophy
+of science as a single argument converging on this framework, and
+identify ten cases where independent traditions discovered the same
+structure in different language. Second, we argue that the Quantified
+Boolean Bayesian Network (QBBN) is the best known candidate for a
+universal practical coding scheme for the MDL objective: it is
+complete over first-order logic, generative, tractable via belief
+propagation, and---by the \texttt{shannon} result---the coding scheme
+that transformers implicitly implement. Third, we demonstrate the
+framework empirically in two domains: programs and code
+(\texttt{auto-research}), where a new result shows current AutoResearch
+systems are one $L(H)$ term short of the full objective, accounting
+for a 65.2\% improvement on benchmark problems; and logical
+proposition datasets (\texttt{mdl-science}), where QBBN-coded MDL
+selects correct conjunctive structure, amortizes 8 bits of theory over
+510 bits of savings at scale, and exhibits the discrete regularity
+crossover that instantiates Kuhn's paradigm shift at the bit level.
+Fourth, we argue that a system with the right objective function is
+doing science regardless of substrate: automated theorem proving with
+MDL is not adjacent to AGI---it is AGI. The objective function is MDL.
+We already know what it is.
 \end{abstract}
 
 \tableofcontents
 \newpage
 
+\input{sec-introduction}
 \input{sec-objective}
 \input{sec-kolmogorov}
+\input{sec-coding-scheme}
 \input{sec-history}
 \input{sec-connections}
-\input{sec-experiments}
+\input{sec-experiments-code}
+\input{sec-experiments-logic}
 \input{sec-verification}
 \input{sec-agi}
 

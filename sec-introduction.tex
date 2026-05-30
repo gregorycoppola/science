@@ -1,0 +1,93 @@
+\section{Introduction}
+\label{sec:introduction}
+
+Science has always had an objective function. It has never been written
+down in a single place. This paper writes it down.
+
+The objective function is:
+\[
+  \text{minimize} \quad L(H) + L(D \mid H)
+\]
+where $H$ is a hypothesis, $D$ is observed data, $L(H)$ is the
+description length of the hypothesis, and $L(D \mid H)$ is the
+description length of the data given the hypothesis. This is the
+Minimum Description Length (MDL) principle---the computable
+approximation to Solomonoff induction, which is Bayesian inference
+with the Kolmogorov/Solomonoff prior. It is not a new proposal. It is
+a formal statement of what science has always been doing informally.
+
+This paper makes four contributions.
+
+\textbf{A synthesis of the history of philosophy of science.} The
+history of philosophy of science from Hume through Popper, Kuhn,
+Lakatos, Feyerabend, and the Bayesian tradition is a single long
+argument about one problem: Hume's problem of induction. Every major
+movement is a partial approximation to the framework above. We trace
+this arc and show that each movement captured one component of the
+full solution without being able to state it. Section~\ref{sec:history}
+develops this argument. Section~\ref{sec:connections} identifies ten
+cases where ideas from independent traditions---philosophy,
+computability theory, information theory, neuroscience, machine
+learning---turn out to be the same idea expressed in different language.
+
+\textbf{The QBBN as a universal coding scheme for logical hypotheses.}
+MDL requires a coding scheme: a way of assigning description lengths to
+hypotheses. The Kolmogorov prior gives the theoretically optimal
+scheme, but it is uncomputable. Every practical coding scheme covers
+only a restricted hypothesis class. The Quantified Boolean Bayesian
+Network (QBBN)~\cite{coppola2024qbbn} is the best known candidate for
+a universal practical coding scheme: it is complete over first-order
+logic (covering all of mathematics and science), generative (assigning
+likelihoods to arbitrary proposition datasets), and tractable (belief
+propagation runs in polynomial time). Moreover, the
+\texttt{shannon}~paper~\cite{coppola2026} proves that transformers
+implement exact belief propagation on QBBN-structured factor graphs,
+connecting the coding scheme to the architecture that currently
+dominates machine learning. Section~\ref{sec:coding} develops this
+argument.
+
+\textbf{Two empirical demonstrations.} The framework is demonstrated
+empirically in two domains. In the domain of code and programs
+(Section~\ref{sec:experiments-code}), we demonstrate compression
+ratios, MDL model selection, the replication crisis as a missing
+$L(H)$ term, the search/verify asymmetry, and the Karpathy
+gap---current AutoResearch systems minimize $L(D \mid H)$ without
+$L(H)$, and the missing term accounts for a 65.2\% improvement on
+benchmark problems. In the domain of logical propositions
+(Section~\ref{sec:experiments-logic}), we use the QBBN coding scheme
+to show that conjunctive structure wins over disjunctive, that
+theories are amortized over data (8 bits of theory saves 510 bits at
+$n = 1000$), and that MDL selects correct theory complexity as a
+function of data regularity, with a discrete crossover that
+instantiates Kuhn's paradigm shift mechanism at the bit level.
+
+\textbf{Theorem proving is science; the objective function is AGI.}
+The critics who say ``automated theorem proving is not AGI because it
+is not science'' are relying on an implicit theory of science that has
+no formal content. Under the correct theory, the verification oracle
+is interchangeable: a particle accelerator, a type-checker, and an
+MDL score calculation are all instances of the same abstract
+structure. A system with the right objective function is doing science
+regardless of substrate. Section~\ref{sec:agi} develops this argument
+and proposes a formal definition of AGI grounded in the framework.
+
+\subsection*{Related Work}
+
+The Bayesian/Kolmogorov framework synthesized here draws on
+Solomonoff's universal prior~\cite{solomonoff1964}, Kolmogorov
+complexity~\cite{kolmogorov1965}, Rissanen's MDL
+principle~\cite{rissanen1978}, and the Bayesian tradition in
+philosophy of science~\cite{howson2006}. The connection between
+paradigm shifts and MDL phase transitions extends
+Kuhn~\cite{kuhn1962} and Lakatos~\cite{lakatos1978}. The
+Bayesian brain and predictive coding framework draws on Rao and
+Ballard~\cite{rao1999} and Friston~\cite{friston2005}. The QBBN
+coding scheme is developed in~\cite{coppola2024qbbn}. The proof that
+transformers implement exact belief propagation on QBBN-structured
+factor graphs is in~\cite{coppola2026}. The AutoResearch system
+discussed in the Karpathy gap analysis is~\cite{karpathy2026}.
+
+The \texttt{auto-research} and \texttt{mdl-science} repositories
+contain all code and data for the empirical demonstrations. All
+results are reproducible by following the instructions in those
+repositories.
