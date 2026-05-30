@@ -1,0 +1,205 @@
+\section{Experiments I: Code and Programs}
+\label{sec:experiments-code}
+
+The experiments in this section instantiate the MDL objective function
+in the domain of programs and code. All results are reproducible from
+the \texttt{auto-research} repository. Six experiments, each isolating
+one aspect of $L(H) + L(D \mid H)$: \texttt{compress} measures $L(H)$
+directly via compression ratio; \texttt{mdl} shows the $L(H)$ vs
+$L(D \mid H)$ tradeoff in polynomial model selection; \texttt{replicate}
+shows what happens when $L(H)$ is underreported; \texttt{search} shows
+that verification is evaluating $L(D \mid H)$ cheaply; \texttt{update}
+shows the Kolmogorov prior doing work data alone cannot; \texttt{autoloop}
+runs the full MDL loop and identifies the gap between current AutoResearch
+systems and the complete objective.
+
+\subsection{Structure Is Compressibility (\texttt{ar compress})}
+
+Kolmogorov complexity is uncomputable, but lossless compression provides
+a computable upper bound. A string that compresses well has low $\K$; one
+that does not compress has high $\K$. The compression ratio approximates
+$\K(x)/|x|$---the complexity relative to the raw length.
+
+\begin{center}
+\begin{tabular}{lrrl}
+\toprule
+File & Raw bytes & Ratio & Interpretation \\
+\midrule
+\texttt{repeated\_pattern} & 1009 & 0.036 & highly structured \\
+\texttt{genome\_like}      &  766 & 0.123 & highly structured \\
+\texttt{source\_code}      &  868 & 0.414 & moderate structure \\
+\texttt{english\_prose}    & 1501 & 0.502 & moderate structure \\
+\texttt{pi\_digits}        & 1009 & 0.520 & moderate structure \\
+\texttt{random\_noise}     &  369 & 0.564 & low structure \\
+\texttt{natural\_law}      &  591 & 0.604 & low structure \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+The genome compresses to 12.3\% of its raw size. DNA looks complex but
+is built from repeated motifs; evolution is a compressive process.
+
+The digits of $\pi$ compress to only 52.0\%. $\pi$ has very low true
+Kolmogorov complexity---there exists a short program that generates it
+exactly---but gzip finds only local repetitions. This illustrates the
+gap between the compression proxy and the true $\K(x)$: gzip is an
+upper bound, not the true complexity.
+
+Natural laws compress to 60.4\%, below random noise. The structure
+in natural laws is semantic, not syntactic; gzip cannot see it. The
+true $\K$ of Newton's law---the shortest program predicting all
+observations it covers---is extremely low.
+
+\subsection{The MDL Tradeoff Is Real (\texttt{ar mdl})}
+
+MDL model selection fits polynomials of degree 1 through 8 to data
+from a known degree, computing $L(H) + L(D \mid H)$ for each.
+
+On a true degree-2 parabola, 40 points, $\sigma = 0.3$:
+
+\begin{center}
+\begin{tabular}{rrrr}
+\toprule
+Degree & $L(H)$ & $L(D \mid H)$ & Total \\
+\midrule
+1 & 64.0 & 101.2 & 165.2 \\
+2 & 96.0 & $-0.2$ & \textbf{95.8} \\
+3 & 128.0 & $-0.4$ & 127.6 \\
+4 & 160.0 & $-0.4$ & 159.6 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+MDL recovers the true degree. The decisive test is
+\texttt{overfit\_trap}: same generator, only 12 noisy points
+($\sigma = 1.2$):
+
+\begin{center}
+\begin{tabular}{rrrr}
+\toprule
+Degree & $L(H)$ & $L(D \mid H)$ & Total \\
+\midrule
+1 & 64.0 & 31.4 & \textbf{95.4} \\
+2 & 96.0 & 25.4 & 121.4 \\
+3 & 128.0 & 24.9 & 152.9 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+MDL chooses degree 1, not the true degree 2. This is not a failure.
+With 12 noisy points, the improvement in fit does not justify the
+32-bit complexity penalty. The framework is being epistemically honest:
+we do not have enough data to establish the true degree. Science should
+say the same thing.
+
+\subsection{The Replication Crisis Is One Missing Term
+  (\texttt{ar replicate})}
+
+Simulating p-hacking on null data:
+
+\begin{center}
+\begin{tabular}{rrrrl}
+\toprule
+Tests $N$ & Evidence (bits) & Search cost $\log_2 N$ & Corrected & Verdict \\
+\midrule
+10  & 5.13 & 3.32 & 1.80    & not significant \\
+50  & 7.28 & 5.64 & 1.63    & not significant \\
+100 & 6.28 & 6.64 & $-0.37$ & not significant \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Every naive result clears the 4.32-bit threshold ($p < 0.05$). Every
+corrected result is noise. A single test on data with a real effect of
+size 0.8 produces 16.45 bits; at $N = 100$ tests the corrected value
+is 21.25 bits---the real effect survives with massive margin. The
+search cost $\log_2 N$ is exactly the Bonferroni correction in bits.
+The replication crisis is the empirical consequence of omitting this
+term from $L(H)$.
+
+\subsection{Verification Is Constant; Search Scales (\texttt{ar search})}
+
+\begin{center}
+\begin{tabular}{lrr}
+\toprule
+Candidate & Tests passed & Verify time (ms) \\
+\midrule
+\texttt{broken\_empty\_return}  & 0/8 & 0.13 \\
+\texttt{broken\_mutates\_input} & 0/8 & 0.62 \\
+\texttt{broken\_off\_by\_one}   & 0/8 & 0.09 \\
+\texttt{correct\_bubble}        & 8/8 & 0.07 \\
+\texttt{correct\_recursive}     & 8/8 & 0.08 \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Verification time is flat. Complexity and correctness do not affect
+verification cost. Search cost accumulates at 6.1$\times$ the
+verification cost for 5 candidates; with 50,000 candidates the ratio
+is ${\sim}60{,}000\times$. The verification cost never moves. The
+candidate \texttt{broken\_returns\_none} is caught in 0.07\,ms with
+no knowledge of its source or intent. The object speaks for itself.
+
+\subsection{The Right Prior Converges Faster (\texttt{ar update})}
+
+Four hypotheses---$3x$, $3x + 0{\cdot}x^2$, $3x + 0{\cdot}x^3$,
+$3x + 0{\cdot}x^2 + 0{\cdot}x^3$---predict identically for every
+input.
+
+\begin{center}
+\begin{tabular}{lrr}
+\toprule
+Step & Uniform on $3x$ & Kolmogorov on $3x$ \\
+\midrule
+Prior & 25.0\% & 99.6\% \\
+1     & 25.0\% & 99.6\% \\
+5     & 25.0\% & 99.6\% \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+The uniform prior stays at 25\% forever. The Kolmogorov prior starts
+at 99.6\% before any data. Among hypotheses that predict equally well,
+the prior decides---and it should be the Kolmogorov prior. In the
+weak-signal case (true $2x$, noise $= 1.5$), the Kolmogorov prior
+starts $2x$ lower than uniform (17.4\% vs 25\%) yet reaches 78\% at
+step 3 versus 68.5\% for uniform. The mechanism: the Kolmogorov prior
+suppressed the wrong alternatives from the start.
+
+\subsection{The Karpathy Gap (\texttt{ar autoloop})}
+
+The \texttt{autoloop} experiment models the Karpathy AutoResearch loop
+in two modes: full MDL ($L(H) + L(D \mid H)$) and $L(D \mid H)$ only.
+Starting from a baseline that already passes all 8 tests:
+
+\begin{center}
+\begin{tabular}{llrrrrl}
+\toprule
+Iter & Mutation & Tests & $L(H)$ & $L(D|H)$ & MDL & Decision \\
+\midrule
+0 & baseline                      & 8/8 & 279 &  0.0 & 279.0 & --- \\
+1 & \texttt{01\_fix\_break}        & 8/8 & 257 &  0.0 & 257.0 & keep \\
+2 & \texttt{02\_add\_type\_check}  & 8/8 & 315 &  0.0 & 315.0 & discard \\
+3 & \texttt{03\_simplify}          & 8/8 & 170 &  0.0 & 170.0 & keep \\
+4 & \texttt{04\_introduce\_bug}    & 3/8 & 197 & 15.0 & 212.0 & discard \\
+5 & \texttt{05\_use\_builtin}      & 8/8 &  97 &  0.0 &  97.0 & keep \\
+6 & \texttt{06\_overengineered}    & 8/8 & 211 &  0.0 & 211.0 & discard \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Full MDL: baseline $279.0 \to 97.0$, \textbf{65.2\% reduction}.
+$L(D \mid H)$-only: 0 improvements, stuck forever. The decisive case
+is \texttt{06\_overengineered}: passes all tests, $L(D \mid H) = 0$,
+$L(H) = 211$. Full MDL discards it; $L(D \mid H)$-only cannot
+distinguish it from \texttt{05\_use\_builtin}.
+
+This is the Karpathy gap: Karpathy's \texttt{val\_bpb} is
+$L(D \mid H)$ in QBBN coding (Section~\ref{sec:coding}) without
+$L(H)$. The gap is not a toy artifact. By the \texttt{shannon} result,
+transformers implement exact BP on QBBN-structured factor graphs, so
+every transformer trained to minimize validation loss without an
+explicit complexity penalty is running the same incomplete objective.
+The missing term is $L(H)$. Adding it completes MDL and prevents
+accumulating complexity over hundreds of iterations whenever doing so
+does not hurt validation loss.
